@@ -53,7 +53,6 @@ Cube::Cube()
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
-	glBindVertexArray(0);
 }
 
 
@@ -64,5 +63,5 @@ Cube::~Cube()
 void obj::Cube::draw()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, _buffer);
-	glDrawArrays(GL_QUADS, 0, 3);
+	glDrawArrays(GL_QUADS, 0, 4);
 }

@@ -31,11 +31,13 @@ MyEngine::MyEngine()
 		cout << glGetString(GL_VERSION) << endl;
 	}
 
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	GLuint shader = _loadShader("res/shaders/basic.shader");
 	glUseProgram(shader);
-	_initBuffers();
+
+	_initObjects();
 	_mainLoop();
-	_destroyBuffers();
+	_destroyObjects();
 }
 
 MyEngine::~MyEngine()
@@ -43,8 +45,11 @@ MyEngine::~MyEngine()
 	glfwTerminate();
 }
 
-void MyEngine::_initBuffers()
+
+void MyEngine::_initObjects()
 {
+	_cube = new obj::Cube();
+#if 0
 	float data[6] = {
 	   -0.5f, -0.5f,
 		0.0f,  0.5f,
@@ -56,11 +61,13 @@ void MyEngine::_initBuffers()
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
-void MyEngine::_destroyBuffers()
+void MyEngine::_destroyObjects()
 {
-	
+	delete _cube;
 }
 
 GLuint MyEngine::_createShader(string & vertexShader, string & fragmentShader)
@@ -134,9 +141,10 @@ GLuint MyEngine::_loadShader(const string & path)
 	return _createShader(vertexCode.str(), fragmentCode.str());
 }
 
-void MyEngine::draw()
+void MyEngine::_draw()
 {
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	_cube->draw();
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void MyEngine::_mainLoop()
@@ -148,7 +156,7 @@ void MyEngine::_mainLoop()
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		draw();
+		_draw();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(_activity);

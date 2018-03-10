@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include "Cube.h"
 
 #define use(ns) using ns;
 use(std::string)
@@ -14,18 +15,20 @@ public:
 
 private:
 	GLFWwindow *_activity;
-	int _activityWidth = 640;
+	int _activityWidth = 720;
 	int _activityHeight = 480;
 
 	GLuint _buffer;
+	void _initObjects();
+	void _draw();
+	void _destroyObjects();
 
-	void _initBuffers();
-	void draw();
-	void _destroyBuffers();
-	GLuint _createShader(string &vertexShader, string &fragmentShader);
+	// TODO: REARRANGE TO ANOTHER CLASS
+	GLuint _createShader(string & vertexShader, string & fragmentShader);
 	GLuint _compileShader(GLuint type, const string & src);
-	GLuint _loadShader(const string &path);
+	GLuint _loadShader(const string & path);
 
+	obj::Cube *_cube;
 	void _mainLoop();
 
 	static void _keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
