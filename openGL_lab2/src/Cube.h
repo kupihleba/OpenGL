@@ -11,12 +11,13 @@ namespace obj {
 	class Cube
 	{
 	public:
-		Cube();
+		Cube(GLuint shader);
 		~Cube();
 		void draw();
 
 	private:
 		GLuint _buffer;
+		GLuint _shader;
 	};
 
 }

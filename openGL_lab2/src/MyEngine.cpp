@@ -32,8 +32,21 @@ MyEngine::MyEngine()
 	}
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	GLuint shader = _loadShader("res/shaders/basic.shader");
-	glUseProgram(shader);
+	_shader = _loadShader("res/shaders/basic.shader");
+	glUseProgram(_shader);
+
+	glViewport(0, 0, _activityWidth, _activityHeight);
+
+	/*if (_activityWidth > _activityHeight) {
+		int size =  _activityHeight;
+		int delta = (_activityWidth - _activityHeight) / 2;
+		glViewport(delta, 0, size, size);
+	}
+	else {
+		int size = _activityWidth;
+		int delta = (_activityHeight - _activityWidth) / 2;
+		glViewport(0, delta, size, size);
+	}*/
 
 	_initObjects();
 	_mainLoop();
@@ -48,7 +61,7 @@ MyEngine::~MyEngine()
 
 void MyEngine::_initObjects()
 {
-	_cube = new obj::Cube();
+	_cube = new obj::Cube(_shader);
 #if 0
 	float data[6] = {
 	   -0.5f, -0.5f,

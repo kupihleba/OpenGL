@@ -22,6 +22,7 @@ private:
 	void _initObjects();
 	void _draw();
 	void _destroyObjects();
+	GLuint _shader;
 
 	// TODO: REARRANGE TO ANOTHER CLASS
 	GLuint _createShader(string & vertexShader, string & fragmentShader);
