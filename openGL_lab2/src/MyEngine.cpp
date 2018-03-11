@@ -172,14 +172,26 @@ void MyEngine::_mainLoop()
 
 void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
+	MyEngine *context = static_cast<MyEngine*>(glfwGetWindowUserPointer(window));
+
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
-		MyEngine *context = static_cast<MyEngine*>(glfwGetWindowUserPointer(window));
 		if (context->_type == GL_FILL) {
 			context->_type = GL_LINE;
 		} else {
 			context->_type = GL_FILL;
 		}
+	}
+	switch (key)
+	{
+	case GLFW_KEY_KP_ADD:
+		context->_cube->setSize(context->_cube->getSize() + 0.05);
+		break;
+	case GLFW_KEY_KP_SUBTRACT:
+		context->_cube->setSize(context->_cube->getSize() - 0.05);
+		break;
+	default:
+		break;
 	}
 }

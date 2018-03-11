@@ -12,10 +12,11 @@ Cube::Cube(GLuint shader)
 {
 	_shader = shader;
 	_view = GL_LINE;
+	_size = 1.0f;
 
 #if 1
 	float data[DIM * EDGES * PT_PER_EDGE /*+ COLOURS*/] = {
-
+		
 		//1.0f,  0.0f, 0.0f,
 		//     BACK     //
 		-1.0f, -1.0f, -1.0f,
@@ -172,26 +173,28 @@ Cube::~Cube()
 void obj::Cube::draw()
 {
 	GLfloat timeValue = glfwGetTime();
-	float k = 1.0f;
+	float k = _size;
 	const int SZ = 16;
 	float fi = timeValue;
 	float norm[SZ] = {
-		1.0f, 0.0f,      0.0f,    0.0f,
-		0.0f, k*cos(fi), sin(fi), 0.0f,
-		0.0f, -sin(fi),  cos(fi), 0.0f,
-		0.0f, 0.0f,      0.0f,    1.0f,
+		1.0f,   0.0f,     0.0f,     0.0f,
+		0.0f,  cos(fi), sin(fi),    0.0f,
+		0.0f,  -sin(fi),  cos(fi),  0.0f,
+		0.0f,    0.0f,      0.0f,     1.0f,
 	};
 	
 	GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
 	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
 	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
 	GLint y_angle = glGetUniformLocation(_shader, "y_angle");
+	GLint k_loc = glGetUniformLocation(_shader, "k");
 
 	glUniform1f(y_angle, fi);
 	glUseProgram(_shader);
 	glUniform4f(vertexColorLocation, 0.0f, greenValue, 1.0f, 1.0f);
 	//glMatrixMode(GL_PROJECTION);
 	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, norm);
+	glUniform1f(k_loc, k);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, _buffer);
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
@@ -217,4 +220,14 @@ void obj::Cube::draw()
 void obj::Cube::setView(GLint view)
 {
 	_view = view;
+}
+
+void obj::Cube::setSize(float k)
+{
+	_size = k;
+}
+
+float obj::Cube::getSize()
+{
+	return _size;
 }

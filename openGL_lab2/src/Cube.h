@@ -16,13 +16,16 @@ namespace obj {
 		void draw();
 
 		void setView(GLint view);
+		void setSize(float k);
+		float getSize();
 
 	private:
 		GLuint _VBufObj;
 		GLuint _VArrObj;
 
 		GLuint _shader;
-
+		
+		float _size;
 		GLint _view;
 	};
 
