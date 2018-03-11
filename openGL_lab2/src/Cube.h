@@ -15,11 +15,15 @@ namespace obj {
 		~Cube();
 		void draw();
 
+		void setView(GLint view);
+
 	private:
 		GLuint _VBufObj;
 		GLuint _VArrObj;
 
 		GLuint _shader;
+
+		GLint _view;
 	};
 
 }

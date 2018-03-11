@@ -11,43 +11,10 @@ using namespace obj;
 Cube::Cube(GLuint shader)
 {
 	_shader = shader;
-#if 0
+	_view = GL_LINE;
+
+#if 1
 	float data[DIM * EDGES * PT_PER_EDGE /*+ COLOURS*/] = {
-		
-		//0.0f,  0.0f, 5.0f,
-		//     TOP      //
-   	     1.0f,  1.0f, 1.0f,
-	     1.0f, -1.0f, 1.0f,
-	    -1.0f, -1.0f, 1.0f,
-		-1.0f,  1.0f, 1.0f,
-
-		//0.0f,  0.0f, 1.0f,
-		//    BOTTOM    //
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,	
-
-		 //0.0f,  0.5f, 0.0f,
-		 //     LEFT     //
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,		
-
-		 //0.0f,  0.1f, 0.0f,
-		 //    RIGHT     //
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-
-		//0.5f,  0.0f, 0.0f,
-		//     FACE     //
-		1.0f, -1.0f, -1.0f,
-		1.0f,  1.0f, -1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f, -1.0f,  1.0f
 
 		//1.0f,  0.0f, 0.0f,
 		//     BACK     //
@@ -55,6 +22,42 @@ Cube::Cube(GLuint shader)
 		-1.0f, -1.0f,  1.0f,
 		-1.0f,  1.0f,  1.0f,
 		-1.0f,  1.0f, -1.0f,
+
+		//0.5f,  0.0f, 0.0f,
+		//     FACE     //
+	     1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+	     1.0f,  1.0f, -1.0f,
+
+
+		//0.0f,  0.1f, 0.0f,
+		//    RIGHT     //
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+
+		//0.0f,  0.5f, 0.0f,
+		//     LEFT     //
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		
+		//0.0f,  0.0f, 1.0f,
+		//    BOTTOM    //
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+
+		//0.0f,  0.0f, 5.0f,
+		//     TOP      //
+   	     1.0f,  1.0f, 1.0f,
+	     1.0f, -1.0f, 1.0f,
+	    -1.0f, -1.0f, 1.0f,
+		-1.0f,  1.0f, 1.0f,
 	};
 #endif
 #if 0
@@ -103,7 +106,7 @@ Cube::Cube(GLuint shader)
 		-0.5f,  0.5f, -0.5f,  
 	};
 #endif
-#if 1
+#if 0
 	float data[3 * 4 * 6] = {
 		-1.0f,  1.0f,  1.0f,
 		-1.0f, -1.0f,  1.0f,
@@ -191,7 +194,7 @@ void obj::Cube::draw()
 	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, norm);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, _buffer);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, _view);
 	/*glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(norm);
 	glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
@@ -206,6 +209,12 @@ void obj::Cube::draw()
 	//glDrawArrays(GL_QUADS, 0, 24);
 
 	glBindVertexArray(_VBufObj);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 24);
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, 24);
+	glDrawArrays(GL_QUADS, 0, 24);
 	glBindVertexArray(0);
+}
+
+void obj::Cube::setView(GLint view)
+{
+	_view = view;
 }

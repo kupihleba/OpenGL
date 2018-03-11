@@ -8,11 +8,9 @@ use(std::cout) use(std::endl)
 
 MyEngine::MyEngine()
 {
-	/* Initialize the library */
 	if (!glfwInit())
 		throw -1;
 
-	/* Create a windowed mode window and its OpenGL context */
 	_activity = glfwCreateWindow(_activityWidth, _activityHeight, "Hello World", NULL, NULL);
 	if (!_activity)
 	{
@@ -21,8 +19,8 @@ MyEngine::MyEngine()
 	}
 	glfwSetKeyCallback(_activity, _keyCallback);
 
-	/* Make the window's context current */
 	glfwMakeContextCurrent(_activity);
+	glfwSetWindowUserPointer(_activity, this);
 
 	if (glewInit() != GLEW_OK) {
 		cout << "glewInit failed!" << endl;
@@ -37,7 +35,7 @@ MyEngine::MyEngine()
 
 	glViewport(0, 0, _activityWidth, _activityHeight);
 
-	/*if (_activityWidth > _activityHeight) {
+	if (_activityWidth > _activityHeight) {
 		int size =  _activityHeight;
 		int delta = (_activityWidth - _activityHeight) / 2;
 		glViewport(delta, 0, size, size);
@@ -46,7 +44,7 @@ MyEngine::MyEngine()
 		int size = _activityWidth;
 		int delta = (_activityHeight - _activityWidth) / 2;
 		glViewport(0, delta, size, size);
-	}*/
+	}
 
 	_initObjects();
 	_mainLoop();
@@ -156,25 +154,18 @@ GLuint MyEngine::_loadShader(const string & path)
 
 void MyEngine::_draw()
 {
+	_cube->setView(_type);
 	_cube->draw();
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void MyEngine::_mainLoop()
 {
-	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(_activity))
 	{
-		
-		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
-
 		_draw();
-
-		/* Swap front and back buffers */
 		glfwSwapBuffers(_activity);
-
-		/* Poll for and process events */
 		glfwPollEvents();
 	}
 }
@@ -183,4 +174,12 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
+		MyEngine *context = static_cast<MyEngine*>(glfwGetWindowUserPointer(window));
+		if (context->_type == GL_FILL) {
+			context->_type = GL_LINE;
+		} else {
+			context->_type = GL_FILL;
+		}
+	}
 }

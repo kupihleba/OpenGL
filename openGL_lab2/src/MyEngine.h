@@ -18,11 +18,15 @@ private:
 	int _activityWidth = 720;
 	int _activityHeight = 480;
 
+	GLuint _shader;
 	GLuint _buffer;
+
+	GLint _type = GL_LINE;
+
 	void _initObjects();
 	void _draw();
 	void _destroyObjects();
-	GLuint _shader;
+	
 
 	// TODO: REARRANGE TO ANOTHER CLASS
 	GLuint _createShader(string & vertexShader, string & fragmentShader);
