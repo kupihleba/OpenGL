@@ -11,31 +11,29 @@ using namespace obj;
 Cube::Cube(GLuint shader)
 {
 	_shader = shader;
-
+#if 0
 	float data[DIM * EDGES * PT_PER_EDGE /*+ COLOURS*/] = {
+		
+		//0.0f,  0.0f, 5.0f,
+		//     TOP      //
+   	     1.0f,  1.0f, 1.0f,
+	     1.0f, -1.0f, 1.0f,
+	    -1.0f, -1.0f, 1.0f,
+		-1.0f,  1.0f, 1.0f,
+
 		//0.0f,  0.0f, 1.0f,
 		//    BOTTOM    //
 		-1.0f,  1.0f, -1.0f,
 		 1.0f,  1.0f, -1.0f,
 		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		
-		
-		//0.0f,  0.0f, 5.0f,
-		 //     TOP      //
-		 1.0f,  1.0f, 1.0f,
-		 1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
-		-1.0f,  1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,	
 
 		 //0.0f,  0.5f, 0.0f,
 		 //     LEFT     //
 		 1.0f, -1.0f, -1.0f,
 		 1.0f, -1.0f,  1.0f,
 		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-
-		
+		-1.0f, -1.0f, -1.0f,		
 
 		 //0.0f,  0.1f, 0.0f,
 		 //    RIGHT     //
@@ -57,66 +55,108 @@ Cube::Cube(GLuint shader)
 		-1.0f, -1.0f,  1.0f,
 		-1.0f,  1.0f,  1.0f,
 		-1.0f,  1.0f, -1.0f,
-
-		 
 	};
-	/*float data[] = {
-		// Позиции             // Цвета
-		-0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,    1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
+#endif
+#if 0
+	float data[] = {
+		// Позиции             
+		-0.5f, -0.5f, -0.5f,   
+		0.5f, -0.5f, -0.5f,    
+		0.5f,  0.5f, -0.5f,    
+		0.5f,  0.5f, -0.5f,    
+		-0.5f,  0.5f, -0.5f,   
+		-0.5f, -0.5f, -0.5f,   
 
-		-0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  
+		0.5f, -0.5f,  0.5f,    
+		0.5f,  0.5f,  0.5f,    
+		0.5f,  0.5f,  0.5f,    
+		-0.5f,  0.5f,  0.5f,   
+		-0.5f, -0.5f,  0.5f,   
 
-		-0.5f,  0.5f,  0.5f,   1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,   0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,   0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,   1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  
+		-0.5f,  0.5f, -0.5f,   
+		-0.5f, -0.5f, -0.5f,   
+		-0.5f, -0.5f, -0.5f,   
+		-0.5f, -0.5f,  0.5f,   
+		-0.5f,  0.5f,  0.5f,  
 
-		0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,    
+		0.5f,  0.5f, -0.5f,    
+		0.5f, -0.5f, -0.5f,   
+		0.5f, -0.5f, -0.5f,    
+		0.5f, -0.5f,  0.5f,   
+		0.5f,  0.5f,  0.5f,    
 
-		-0.5f, -0.5f, -0.5f,   0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,    1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,   0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,   
+		0.5f, -0.5f, -0.5f,    
+		0.5f, -0.5f,  0.5f,    
+		0.5f, -0.5f,  0.5f,    
+		-0.5f, -0.5f,  0.5f,  
+		-0.5f, -0.5f, -0.5f,  
 
-		-0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,   0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,   0.0f, 1.0f
-	};*/
+		-0.5f,  0.5f, -0.5f,  
+		0.5f,  0.5f, -0.5f,    
+		0.5f,  0.5f,  0.5f,   
+		0.5f,  0.5f,  0.5f,    
+		-0.5f,  0.5f,  0.5f,   
+		-0.5f,  0.5f, -0.5f,  
+	};
+#endif
+#if 1
+	float data[3 * 4 * 6] = {
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+#endif
 	for (int i = 0; i < DIM * EDGES * PT_PER_EDGE; i++) {
 		data[i] /= 2.0f;
 	}
+	/*
+	for (int i = 0; i < 24*3; i++) {
+		data[i] /= 2.0f;
+	}*/
+	
+#if 1
+	glGenBuffers(1, &_VBufObj);
+	glGenVertexArrays(1, &_VArrObj);
 
-
-	glGenBuffers(1, &_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, _buffer);
+	glBindVertexArray(_VArrObj);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
+#endif
 }
 
 
@@ -138,7 +178,6 @@ void obj::Cube::draw()
 		0.0f, -sin(fi),  cos(fi), 0.0f,
 		0.0f, 0.0f,      0.0f,    1.0f,
 	};
-
 	
 	GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
 	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
@@ -163,7 +202,10 @@ void obj::Cube::draw()
 	*/
 	//glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
 	//glRotatef(60.0f, 1.0f, 0.0f, 0.0f);
-	glBindVertexArray(_buffer);
-	glDrawArrays(GL_QUADS, 0, 24*2);
+	
+	//glDrawArrays(GL_QUADS, 0, 24);
+
+	glBindVertexArray(_VBufObj);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 24);
 	glBindVertexArray(0);
 }

@@ -16,7 +16,9 @@ namespace obj {
 		void draw();
 
 	private:
-		GLuint _buffer;
+		GLuint _VBufObj;
+		GLuint _VArrObj;
+
 		GLuint _shader;
 	};
 
