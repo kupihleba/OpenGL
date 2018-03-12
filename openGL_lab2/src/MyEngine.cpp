@@ -12,7 +12,7 @@ MyEngine::MyEngine()
 	if (!glfwInit())
 		throw -1;
 
-	_activity = glfwCreateWindow(_activityWidth, _activityHeight, "Hello World", NULL, NULL);
+	_activity = glfwCreateWindow(_activityWidth, _activityHeight, "Kupihleba project", NULL, NULL);
 	if (!_activity)
 	{
 		glfwTerminate();
@@ -34,8 +34,8 @@ MyEngine::MyEngine()
 	_basicShader = _shaderFactory.loadShader("res/shaders/basic.shader");
 	_staticShader = _shaderFactory.loadShader("res/shaders/static.shader");
 
-	glUseProgram(_basicShader);
-	glUseProgram(_staticShader);
+	//glUseProgram(_basicShader);
+	//glUseProgram(_staticShader);
 
 	//glViewport(0, 0, _activityWidth, _activityHeight);
 
@@ -62,9 +62,9 @@ MyEngine::~MyEngine()
 
 void MyEngine::_initObjects()
 {
-	_cube = new obj::Cube(_basicShader);
-	_miniCube = new obj::Cube(_staticShader);
-	_extraCube = new obj::Cube(_staticShader);
+	_cube = shared_ptr<obj::Cube>(new obj::Cube(_basicShader));
+	_miniCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
+	_extraCube = shared_ptr<obj::Cube>(new obj::Cube(_staticShader));
 	
 	_miniCube->setXangle(0.5f);
 	_miniCube->setYangle(0.5f);
@@ -72,12 +72,7 @@ void MyEngine::_initObjects()
 	_extraCube->setYangle(0.5f);
 }
 
-void MyEngine::_destroyObjects()
-{
-	delete _cube;
-	delete _miniCube;
-	delete _extraCube;
-}
+void MyEngine::_destroyObjects() {}
 
 void MyEngine::_draw()
 {
@@ -95,11 +90,10 @@ void MyEngine::_draw()
 	_cube->draw();
 
 	glViewport(0, 0, 100, 100);
-	_miniCube->customDraw();
+	_miniCube->simpleDraw();
 
 	glViewport(0, 100, 600, 600);
 	_extraCube->projDraw();
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void MyEngine::_mainLoop()
@@ -119,6 +113,7 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
+
 	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
 		if (context->_type == GL_FILL) {
 			context->_type = GL_LINE;
@@ -126,34 +121,36 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 			context->_type = GL_FILL;
 		}
 	}
-	float x_angle, y_angle;
-	switch (key)
-	{
-	case GLFW_KEY_KP_ADD:
-		context->_cube->setSize(context->_cube->getSize() + 0.05);
-		break;
-	case GLFW_KEY_KP_SUBTRACT:
-		context->_cube->setSize(context->_cube->getSize() - 0.05);
-		break;
+	else {
+		float x_angle, y_angle;
+		switch (key)
+		{
+		case GLFW_KEY_KP_ADD:
+			context->_cube->setSize(context->_cube->getSize() + 0.05);
+			break;
+		case GLFW_KEY_KP_SUBTRACT:
+			context->_cube->setSize(context->_cube->getSize() - 0.05);
+			break;
 
-	case GLFW_KEY_LEFT:
-		x_angle = std::get<0>(context->_cube->getRotation());
-		context->_cube->setXangle(x_angle + 0.02);
-		break;
-	case GLFW_KEY_RIGHT:
-		x_angle = std::get<0>(context->_cube->getRotation());
-		context->_cube->setXangle(x_angle - 0.02);
-		break;
+		case GLFW_KEY_LEFT:
+			x_angle = std::get<0>(context->_cube->getRotation());
+			context->_cube->setXangle(x_angle + 0.02);
+			break;
+		case GLFW_KEY_RIGHT:
+			x_angle = std::get<0>(context->_cube->getRotation());
+			context->_cube->setXangle(x_angle - 0.02);
+			break;
 
-	case GLFW_KEY_UP:
-		y_angle = std::get<1>(context->_cube->getRotation());
-		context->_cube->setYangle(y_angle + 0.05);
-		break;
-	case GLFW_KEY_DOWN:
-		y_angle = std::get<1>(context->_cube->getRotation());
-		context->_cube->setYangle(y_angle - 0.05);
-		break;
-	default:
-		break;
+		case GLFW_KEY_UP:
+			y_angle = std::get<1>(context->_cube->getRotation());
+			context->_cube->setYangle(y_angle + 0.05);
+			break;
+		case GLFW_KEY_DOWN:
+			y_angle = std::get<1>(context->_cube->getRotation());
+			context->_cube->setYangle(y_angle - 0.05);
+			break;
+		default:
+			break;
+		}
 	}
 }

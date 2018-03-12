@@ -4,9 +4,10 @@
 #include <string>
 #include "Cube.h"
 #include "ShaderFactory.h"
+#include <memory>
 
 #define use(ns) using ns;
-use(std::string)
+use(std::string) use(std::shared_ptr)
 
 class MyEngine
 {
@@ -31,9 +32,9 @@ private:
 
 	ShaderFactory _shaderFactory;
 
-	obj::Cube *_cube;
-	obj::Cube *_miniCube;
-	obj::Cube *_extraCube;
+	shared_ptr<obj::Cube> _cube;
+	shared_ptr<obj::Cube> _miniCube;
+	shared_ptr<obj::Cube> _extraCube;
 
 	void _mainLoop();
 

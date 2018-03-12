@@ -35,7 +35,6 @@ Cube::Cube(GLuint shader):Object()
 		 1.0f,  1.0f,  1.0f,
 	     1.0f,  1.0f, -1.0f,
 
-
 		//0.0f,  0.1f, 0.0f,
 		//    RIGHT     //
 		-1.0f,  1.0f, -1.0f,
@@ -123,10 +122,7 @@ Cube::Cube(GLuint shader):Object()
 }
 
 
-
-Cube::~Cube()
-{
-}
+Cube::~Cube() {}
 
 void obj::Cube::projDraw()
 {
@@ -185,7 +181,7 @@ void obj::Cube::customDraw()
 	glUseProgram(_shader);
 	glBindVertexArray(_VBufObj);
 
-	glLoadIdentity();
+	//glLoadIdentity();
 
 	glMatrixMode(GL_MODELVIEW);
 	//glRotatef(0.7f, 0.0f, 1.0, 0.0f);
@@ -207,6 +203,21 @@ void obj::Cube::customDraw()
 	glBindVertexArray(0);
 }
 
+void obj::Cube::simpleDraw() {
+	glUseProgram(_shader);
+	glm::mat4 res = /*tranlation*/ _rotation * _size;
+
+	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
+	GLint myColor = glGetUniformLocation(_shader, "myColor");
+
+	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(res));
+	glUniform4f(myColor, 0.0f, 0.0f, 1.0f, 1.0f);
+	glPolygonMode(GL_FRONT_AND_BACK, _view);
+
+	glBindVertexArray(_VBufObj);
+	glDrawArrays(GL_QUADS, 0, 24);
+	glBindVertexArray(0);
+}
 
 void obj::Cube::draw()
 {

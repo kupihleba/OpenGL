@@ -19,7 +19,7 @@ Object::~Object()
 void Object::setSize(float k)
 {
 	_size_koefficient = k;
-	_size = glm::translate(glm::vec3(k, k, k));
+	_size = glm::scale(glm::vec3(k, k, k));
 }
 
 float Object::getSize()

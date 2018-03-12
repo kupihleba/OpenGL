@@ -14,11 +14,15 @@ namespace obj {
 	public:
 		Cube(GLuint shader);
 		~Cube();
-		virtual void draw();
 
 		void setView(GLint view);
+
+		// TODO: REMOVE MULTIPLE METHODS!
+		void draw();
 		void Cube::customDraw();
 		void Cube::projDraw();
+
+		void simpleDraw();
 
 	private:
 		GLuint _VBufObj;

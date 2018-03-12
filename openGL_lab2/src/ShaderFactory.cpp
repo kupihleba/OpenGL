@@ -6,14 +6,9 @@
 #define use(ns) using ns;
 use(std::cout) use(std::endl)
 
-ShaderFactory::ShaderFactory()
-{
-}
+ShaderFactory::ShaderFactory() {}
 
-
-ShaderFactory::~ShaderFactory()
-{
-}
+ShaderFactory::~ShaderFactory() {}
 
 GLuint ShaderFactory::_createShader(string & vertexShader, string & fragmentShader)
 {
