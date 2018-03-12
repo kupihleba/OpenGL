@@ -1,4 +1,7 @@
 #include "Cube.h"
+#include <glm\glm.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+#include <tuple>
 
 #define DIM 3	// dimension
 #define PT_PER_EDGE 4
@@ -13,6 +16,9 @@ Cube::Cube(GLuint shader)
 	_shader = shader;
 	_view = GL_LINE;
 	_size = 1.0f;
+	_xAngle = 0.0f;
+	_yAngle = 0.0f;
+	_zAngle = 0.0f;
 
 #if 1
 	float data[DIM * EDGES * PT_PER_EDGE /*+ COLOURS*/] = {
@@ -172,16 +178,22 @@ Cube::~Cube()
 
 void obj::Cube::draw()
 {
-	GLfloat timeValue = glfwGetTime();
+	GLfloat timeValue = (GLfloat)glfwGetTime();
 	float k = _size;
 	const int SZ = 16;
-	float fi = timeValue;
+	float fi = _xAngle;//timeValue;
 	float norm[SZ] = {
 		1.0f,   0.0f,     0.0f,     0.0f,
 		0.0f,  cos(fi), sin(fi),    0.0f,
 		0.0f,  -sin(fi),  cos(fi),  0.0f,
 		0.0f,    0.0f,      0.0f,     1.0f,
 	};
+
+	glUseProgram(_shader);
+	
+	//glm::mat4 rotAxis(1.0f, 0.0f, 0.0f, 1.0f);
+	float w = 100, h = 100;
+	glm::mat4 proj = glm::perspective(45.0f, (float)w / (float)h, 0.1f, 100.0f);
 	
 	GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
 	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
@@ -189,7 +201,7 @@ void obj::Cube::draw()
 	GLint y_angle = glGetUniformLocation(_shader, "y_angle");
 	GLint k_loc = glGetUniformLocation(_shader, "k");
 
-	glUniform1f(y_angle, fi);
+	glUniform1f(y_angle, timeValue+_yAngle);
 	glUseProgram(_shader);
 	glUniform4f(vertexColorLocation, 0.0f, greenValue, 1.0f, 1.0f);
 	//glMatrixMode(GL_PROJECTION);
@@ -230,4 +242,31 @@ void obj::Cube::setSize(float k)
 float obj::Cube::getSize()
 {
 	return _size;
+}
+
+void obj::Cube::setRotation(float x_angle, float y_angle, float z_angle)
+{
+	_xAngle = x_angle;
+	_yAngle = y_angle;
+	_zAngle = z_angle;
+}
+
+std::tuple<float, float, float> obj::Cube::getAngles()
+{
+	return std::tuple<float, float, float>(_xAngle, _yAngle, _zAngle);
+}
+
+void obj::Cube::setXangle(float x_angle)
+{
+	_xAngle = x_angle;
+}
+
+void obj::Cube::setYangle(float y_angle)
+{
+	_yAngle = y_angle;
+}
+
+void obj::Cube::setZangle(float z_angle)
+{
+	_zAngle = z_angle;
 }

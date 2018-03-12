@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <tuple>
 
 #define use(ns) using ns;
 use(std::cout) use(std::endl)
@@ -30,10 +31,13 @@ MyEngine::MyEngine()
 	}
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	_shader = _loadShader("res/shaders/basic.shader");
-	glUseProgram(_shader);
+	_basicShader = _loadShader("res/shaders/basic.shader");
+	_staticShader = _loadShader("res/shaders/static.shader");
 
-	glViewport(0, 0, _activityWidth, _activityHeight);
+	glUseProgram(_basicShader);
+	glUseProgram(_staticShader);
+
+	//glViewport(0, 0, _activityWidth, _activityHeight);
 
 	if (_activityWidth > _activityHeight) {
 		int size =  _activityHeight;
@@ -56,10 +60,11 @@ MyEngine::~MyEngine()
 	glfwTerminate();
 }
 
-
 void MyEngine::_initObjects()
 {
-	_cube = new obj::Cube(_shader);
+	_cube = new obj::Cube(_basicShader);
+	_miniCube = new obj::Cube(_staticShader);
+	_miniCube->setXangle(10.5f);
 #if 0
 	float data[6] = {
 	   -0.5f, -0.5f,
@@ -79,6 +84,7 @@ void MyEngine::_initObjects()
 void MyEngine::_destroyObjects()
 {
 	delete _cube;
+	delete _miniCube;
 }
 
 GLuint MyEngine::_createShader(string & vertexShader, string & fragmentShader)
@@ -154,8 +160,20 @@ GLuint MyEngine::_loadShader(const string & path)
 
 void MyEngine::_draw()
 {
+	if (_activityWidth > _activityHeight) {
+		int size = _activityHeight;
+		int delta = (_activityWidth - _activityHeight) / 2;
+		glViewport(delta, 0, size, size);
+	}
+	else {
+		int size = _activityWidth;
+		int delta = (_activityHeight - _activityWidth) / 2;
+		glViewport(0, delta, size, size);
+	}
 	_cube->setView(_type);
 	_cube->draw();
+	glViewport(0, 0, 100, 100);
+	_miniCube->draw();
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
@@ -183,6 +201,7 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 			context->_type = GL_FILL;
 		}
 	}
+	float x_angle, y_angle;
 	switch (key)
 	{
 	case GLFW_KEY_KP_ADD:
@@ -190,6 +209,24 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		break;
 	case GLFW_KEY_KP_SUBTRACT:
 		context->_cube->setSize(context->_cube->getSize() - 0.05);
+		break;
+
+	case GLFW_KEY_LEFT:
+		x_angle = std::get<0>(context->_cube->getAngles());
+		context->_cube->setXangle(x_angle + 0.02);
+		break;
+	case GLFW_KEY_RIGHT:
+		x_angle = std::get<0>(context->_cube->getAngles());
+		context->_cube->setXangle(x_angle - 0.02);
+		break;
+
+	case GLFW_KEY_UP:
+		y_angle = std::get<1>(context->_cube->getAngles());
+		context->_cube->setYangle(y_angle + 0.05);
+		break;
+	case GLFW_KEY_DOWN:
+		y_angle = std::get<1>(context->_cube->getAngles());
+		context->_cube->setYangle(y_angle - 0.05);
 		break;
 	default:
 		break;

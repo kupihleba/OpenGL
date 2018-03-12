@@ -18,7 +18,8 @@ private:
 	int _activityWidth = 720;
 	int _activityHeight = 480;
 
-	GLuint _shader;
+	GLuint _basicShader;
+	GLuint _staticShader;
 	GLuint _buffer;
 
 	GLint _type = GL_LINE;
@@ -34,6 +35,8 @@ private:
 	GLuint _loadShader(const string & path);
 
 	obj::Cube *_cube;
+	obj::Cube *_miniCube;
+
 	void _mainLoop();
 
 	static void _keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
