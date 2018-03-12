@@ -193,27 +193,35 @@ void obj::Cube::projDraw()
 	glUniform4f(vertexColorLocation, 0.5f, 0.5f, 1.0f, 1.0f);
 
 	glm::mat4 rot = glm::eulerAngleYXZ(_xAngle, _yAngle, _zAngle);
+	//glm::mat4 size = glm::
 
 	GLint k_loc = glGetUniformLocation(_shader, "k");
 	glUniform1f(k_loc, 1.0f);
 
 	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
+	
 	//glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(rot));
+#if 0
 	float norm[] = {
-		1.0f,   0.0f,     0.0f,  -0.9f,
-		0.0f,   1.0f,     0.0f,  -0.9f,
-		0.0f,    0.0f,    1.0f,   0.8f,
+		0.1f,   0.0f,     0.0f,  -0.5f,
+		0.0f,   0.1f,     0.0f,  -0.5f,
+		0.0f,    0.0f,    0.1f,   0.4f,
 		0.0f,    0.0f,    0.0f,   1.0f,
 	};
-	/*
+#endif
+
+#if 1
 	float norm[] = {
-		1.0f,   0.0f,     0.0f,   0.0f,
-		0.0f,   1.0f,     0.0f,   0.0f,
-		0.0f,    0.0f,    1.0f,   0.0f,
-		0.0f,    0.0f,    0.0f,   1.0f,
-	};*/
+		0.1f,   0.0f,     0.0f,   0.0f,
+		0.0f,   0.1f,     0.0f,   0.0f,
+		0.0f,    0.0f,    0.1f,   0.1f,
+	   -0.2f,   -0.2f,    0.2f,   1.0f,
+	};
+#endif
 	
-	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, norm);
+	glm::mat4 res = rot * glm::make_mat4(norm);
+
+	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(res));
 
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 	glDrawArrays(GL_QUADS, 0, 24);

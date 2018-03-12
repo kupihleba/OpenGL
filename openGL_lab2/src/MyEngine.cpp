@@ -31,8 +31,8 @@ MyEngine::MyEngine()
 	}
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	_basicShader = _loadShader("res/shaders/basic.shader");
-	_staticShader = _loadShader("res/shaders/static.shader");
+	_basicShader = _shaderFactory.loadShader("res/shaders/basic.shader");
+	_staticShader = _shaderFactory.loadShader("res/shaders/static.shader");
 
 	glUseProgram(_basicShader);
 	glUseProgram(_staticShader);
@@ -65,26 +65,11 @@ void MyEngine::_initObjects()
 	_cube = new obj::Cube(_basicShader);
 	_miniCube = new obj::Cube(_staticShader);
 	_extraCube = new obj::Cube(_staticShader);
-
 	
 	_miniCube->setXangle(0.5f);
 	_miniCube->setYangle(0.5f);
 	_extraCube->setXangle(0.5f);
 	_extraCube->setYangle(0.5f);
-#if 0
-	float data[6] = {
-	   -0.5f, -0.5f,
-		0.0f,  0.5f,
-		0.5f, -0.5f
-	};
-	glGenBuffers(1, &_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, _buffer);
-	glBufferData(GL_ARRAY_BUFFER,  6 * sizeof(float), data, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
 }
 
 void MyEngine::_destroyObjects()
@@ -92,77 +77,6 @@ void MyEngine::_destroyObjects()
 	delete _cube;
 	delete _miniCube;
 	delete _extraCube;
-}
-
-GLuint MyEngine::_createShader(string & vertexShader, string & fragmentShader)
-{
-	GLuint prog = glCreateProgram();
-	GLuint vs = _compileShader(GL_VERTEX_SHADER, vertexShader);
-	GLuint fs = _compileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-	glAttachShader(prog, vs);
-	glAttachShader(prog, fs);
-	glLinkProgram(prog);
-
-	return prog;
-}
-
-GLuint MyEngine::_compileShader(GLuint type, const string & src)
-{
-	GLuint id = glCreateShader(type);
-	const char * ptr = src.c_str();
-	glShaderSource(id, 1, &ptr, nullptr);
-	glCompileShader(id);
-	
-	int res;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &res);
-	if (res == GL_FALSE) {
-		int len;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
-		char *msg = (char*)alloca(len * sizeof(len));
-		glGetShaderInfoLog(id, len, &len, msg);
-		cout << "Failed to compile the " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader" << endl;
-		cout << msg << endl;
-		return 0;
-	}
-
-	return id;
-}
-
-GLuint MyEngine::_loadShader(const string & path)
-{
-	enum Type {
-		UNDEF, VERTEX, FRAGMENT
-	};
-	Type mode = UNDEF;
-	std::stringstream vertexCode, fragmentCode;
-
-	std::ifstream stream(path);
-	
-	string line;
-	while (getline(stream, line))
-	{
-		if (line.find("#vertex") != string::npos) {
-			mode = VERTEX;
-		}
-		else if (line.find("#fragment") != string::npos) {
-			mode = FRAGMENT;
-		}
-		else {
-			switch (mode)
-			{
-			case VERTEX:
-				vertexCode << line << endl;
-					break;
-			case FRAGMENT:
-				fragmentCode << line << endl;
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	return _createShader(vertexCode.str(), fragmentCode.str());
 }
 
 void MyEngine::_draw()
@@ -183,7 +97,7 @@ void MyEngine::_draw()
 	glViewport(0, 0, 100, 100);
 	_miniCube->customDraw();
 
-	glViewport(0, 100, 100, 100);
+	glViewport(0, 100, 600, 600);
 	_extraCube->projDraw();
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }

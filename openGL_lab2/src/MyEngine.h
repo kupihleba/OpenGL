@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include "Cube.h"
+#include "ShaderFactory.h"
 
 #define use(ns) using ns;
 use(std::string)
@@ -27,12 +28,8 @@ private:
 	void _initObjects();
 	void _draw();
 	void _destroyObjects();
-	
 
-	// TODO: REARRANGE TO ANOTHER CLASS
-	GLuint _createShader(string & vertexShader, string & fragmentShader);
-	GLuint _compileShader(GLuint type, const string & src);
-	GLuint _loadShader(const string & path);
+	ShaderFactory _shaderFactory;
 
 	obj::Cube *_cube;
 	obj::Cube *_miniCube;

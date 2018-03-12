@@ -132,6 +132,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ShaderFactory.cpp" />
+    <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Cube.cpp" />
     <ClCompile Include="src\MyEngine.cpp" />
     <ClCompile Include="src\main.cpp">
@@ -140,11 +142,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ShaderFactory.h" />
+    <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Cube.h" />
     <ClInclude Include="src\MyEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.shader" />
+    <None Include="res\shaders\factory\basic.shader" />
     <None Include="res\shaders\static.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
