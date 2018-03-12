@@ -1,6 +1,8 @@
 #include "Cube.h"
 #include <glm\glm.hpp>
 #include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <tuple>
 
 #define DIM 3	// dimension
@@ -175,18 +177,42 @@ Cube::~Cube()
 {
 }
 
+void obj::Cube::customDraw()
+{
+	glUseProgram(_shader);
+	glBindVertexArray(_VBufObj);
+
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	//glRotatef(0.7f, 0.0f, 1.0, 0.0f);
+	
+	glm::mat4 rot = glm::eulerAngleYXZ(0.5f, 0.5f, 0.0f);
+
+	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
+	glUniform4f(vertexColorLocation, 0.5f, 0.5f, 1.0f, 1.0f);
+	
+	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
+	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(rot));
+
+
+	glPolygonMode(GL_FRONT_AND_BACK, _view);
+	glDrawArrays(GL_QUADS, 0, 24);
+	glBindVertexArray(0);
+}
+
 
 void obj::Cube::draw()
 {
 	GLfloat timeValue = (GLfloat)glfwGetTime();
 	float k = _size;
 	const int SZ = 16;
-	float fi = _xAngle;//timeValue;
+	float fi = _xAngle; //timeValue;
 	float norm[SZ] = {
 		1.0f,   0.0f,     0.0f,     0.0f,
-		0.0f,  cos(fi), sin(fi),    0.0f,
+		0.0f,  cos(fi),  sin(fi),   0.0f,
 		0.0f,  -sin(fi),  cos(fi),  0.0f,
-		0.0f,    0.0f,      0.0f,     1.0f,
+		0.0f,    0.0f,     0.0f,    1.0f,
 	};
 
 	glUseProgram(_shader);

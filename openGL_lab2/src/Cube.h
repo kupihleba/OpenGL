@@ -23,6 +23,7 @@ namespace obj {
 		void setXangle(float x_angle);
 		void setYangle(float y_angle);
 		void setZangle(float z_angle);
+		void Cube::customDraw();
 
 	private:
 		GLuint _VBufObj;

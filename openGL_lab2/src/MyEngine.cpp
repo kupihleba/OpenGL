@@ -173,7 +173,7 @@ void MyEngine::_draw()
 	_cube->setView(_type);
 	_cube->draw();
 	glViewport(0, 0, 100, 100);
-	_miniCube->draw();
+	_miniCube->customDraw();
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
