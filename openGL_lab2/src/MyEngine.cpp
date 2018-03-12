@@ -64,7 +64,13 @@ void MyEngine::_initObjects()
 {
 	_cube = new obj::Cube(_basicShader);
 	_miniCube = new obj::Cube(_staticShader);
-	_miniCube->setXangle(10.5f);
+	_extraCube = new obj::Cube(_staticShader);
+
+	
+	_miniCube->setXangle(0.5f);
+	_miniCube->setYangle(0.5f);
+	_extraCube->setXangle(0.5f);
+	_extraCube->setYangle(0.5f);
 #if 0
 	float data[6] = {
 	   -0.5f, -0.5f,
@@ -85,6 +91,7 @@ void MyEngine::_destroyObjects()
 {
 	delete _cube;
 	delete _miniCube;
+	delete _extraCube;
 }
 
 GLuint MyEngine::_createShader(string & vertexShader, string & fragmentShader)
@@ -172,8 +179,12 @@ void MyEngine::_draw()
 	}
 	_cube->setView(_type);
 	_cube->draw();
+
 	glViewport(0, 0, 100, 100);
 	_miniCube->customDraw();
+
+	glViewport(0, 100, 100, 100);
+	_extraCube->projDraw();
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 

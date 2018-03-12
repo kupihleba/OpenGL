@@ -36,6 +36,7 @@ private:
 
 	obj::Cube *_cube;
 	obj::Cube *_miniCube;
+	obj::Cube *_extraCube;
 
 	void _mainLoop();
 

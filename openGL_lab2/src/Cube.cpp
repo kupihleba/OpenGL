@@ -177,6 +177,50 @@ Cube::~Cube()
 {
 }
 
+void obj::Cube::projDraw()
+{
+	glUseProgram(_shader);
+	glBindVertexArray(_VBufObj);
+
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	//glRotatef(0.7f, 0.0f, 1.0, 0.0f);
+
+	//glm::mat4 rot = glm::eulerAngleYXZ(_xAngle, _yAngle, _zAngle);
+
+	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
+	glUniform4f(vertexColorLocation, 0.5f, 0.5f, 1.0f, 1.0f);
+
+	glm::mat4 rot = glm::eulerAngleYXZ(_xAngle, _yAngle, _zAngle);
+
+	GLint k_loc = glGetUniformLocation(_shader, "k");
+	glUniform1f(k_loc, 1.0f);
+
+	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
+	//glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(rot));
+	float norm[] = {
+		1.0f,   0.0f,     0.0f,  -0.9f,
+		0.0f,   1.0f,     0.0f,  -0.9f,
+		0.0f,    0.0f,    1.0f,   0.8f,
+		0.0f,    0.0f,    0.0f,   1.0f,
+	};
+	/*
+	float norm[] = {
+		1.0f,   0.0f,     0.0f,   0.0f,
+		0.0f,   1.0f,     0.0f,   0.0f,
+		0.0f,    0.0f,    1.0f,   0.0f,
+		0.0f,    0.0f,    0.0f,   1.0f,
+	};*/
+	
+	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, norm);
+
+	glPolygonMode(GL_FRONT_AND_BACK, _view);
+	glDrawArrays(GL_QUADS, 0, 24);
+	glBindVertexArray(0);
+}
+
+
 void obj::Cube::customDraw()
 {
 	glUseProgram(_shader);
@@ -187,11 +231,14 @@ void obj::Cube::customDraw()
 	glMatrixMode(GL_MODELVIEW);
 	//glRotatef(0.7f, 0.0f, 1.0, 0.0f);
 	
-	glm::mat4 rot = glm::eulerAngleYXZ(0.5f, 0.5f, 0.0f);
+	glm::mat4 rot = glm::eulerAngleYXZ(_xAngle, _yAngle, _zAngle);
 
 	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
 	glUniform4f(vertexColorLocation, 0.5f, 0.5f, 1.0f, 1.0f);
-	
+
+	GLint k_loc = glGetUniformLocation(_shader, "k");
+	glUniform1f(k_loc, 1.0f);
+
 	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
 	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(rot));
 
