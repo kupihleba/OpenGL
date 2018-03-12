@@ -2,28 +2,21 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <vector>
+#include "Object.h"
 
 #define use(ns) using ns;
 use(std::vector)
 
 namespace obj {
 
-	class Cube
+	class Cube : public Object
 	{
 	public:
 		Cube(GLuint shader);
 		~Cube();
-		void draw();
+		virtual void draw();
 
 		void setView(GLint view);
-		void setSize(float k);
-		float getSize();
-		void setRotation(float x_angle, float y_angle, float z_angle);
-		std::tuple<float, float, float> getAngles();
-		void setXangle(float x_angle);
-		void setYangle(float y_angle);
-		void setZangle(float z_angle);
-
 		void Cube::customDraw();
 		void Cube::projDraw();
 
@@ -32,11 +25,6 @@ namespace obj {
 		GLuint _VArrObj;
 
 		GLuint _shader;
-		
-		float _size;
-		float _xAngle;
-		float _yAngle;
-		float _zAngle;
 
 		GLint _view;
 	};

@@ -137,20 +137,20 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		break;
 
 	case GLFW_KEY_LEFT:
-		x_angle = std::get<0>(context->_cube->getAngles());
+		x_angle = std::get<0>(context->_cube->getRotation());
 		context->_cube->setXangle(x_angle + 0.02);
 		break;
 	case GLFW_KEY_RIGHT:
-		x_angle = std::get<0>(context->_cube->getAngles());
+		x_angle = std::get<0>(context->_cube->getRotation());
 		context->_cube->setXangle(x_angle - 0.02);
 		break;
 
 	case GLFW_KEY_UP:
-		y_angle = std::get<1>(context->_cube->getAngles());
+		y_angle = std::get<1>(context->_cube->getRotation());
 		context->_cube->setYangle(y_angle + 0.05);
 		break;
 	case GLFW_KEY_DOWN:
-		y_angle = std::get<1>(context->_cube->getAngles());
+		y_angle = std::get<1>(context->_cube->getRotation());
 		context->_cube->setYangle(y_angle - 0.05);
 		break;
 	default:

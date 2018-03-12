@@ -1,5 +1,5 @@
 #include "Cube.h"
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -13,14 +13,10 @@
 
 using namespace obj;
 
-Cube::Cube(GLuint shader)
+Cube::Cube(GLuint shader):Object()
 {
 	_shader = shader;
 	_view = GL_LINE;
-	_size = 1.0f;
-	_xAngle = 0.0f;
-	_yAngle = 0.0f;
-	_zAngle = 0.0f;
 
 #if 1
 	float data[DIM * EDGES * PT_PER_EDGE /*+ COLOURS*/] = {
@@ -69,52 +65,7 @@ Cube::Cube(GLuint shader)
 		-1.0f,  1.0f, 1.0f,
 	};
 #endif
-#if 0
-	float data[] = {
-		// Позиции             
-		-0.5f, -0.5f, -0.5f,   
-		0.5f, -0.5f, -0.5f,    
-		0.5f,  0.5f, -0.5f,    
-		0.5f,  0.5f, -0.5f,    
-		-0.5f,  0.5f, -0.5f,   
-		-0.5f, -0.5f, -0.5f,   
 
-		-0.5f, -0.5f,  0.5f,  
-		0.5f, -0.5f,  0.5f,    
-		0.5f,  0.5f,  0.5f,    
-		0.5f,  0.5f,  0.5f,    
-		-0.5f,  0.5f,  0.5f,   
-		-0.5f, -0.5f,  0.5f,   
-
-		-0.5f,  0.5f,  0.5f,  
-		-0.5f,  0.5f, -0.5f,   
-		-0.5f, -0.5f, -0.5f,   
-		-0.5f, -0.5f, -0.5f,   
-		-0.5f, -0.5f,  0.5f,   
-		-0.5f,  0.5f,  0.5f,  
-
-		0.5f,  0.5f,  0.5f,    
-		0.5f,  0.5f, -0.5f,    
-		0.5f, -0.5f, -0.5f,   
-		0.5f, -0.5f, -0.5f,    
-		0.5f, -0.5f,  0.5f,   
-		0.5f,  0.5f,  0.5f,    
-
-		-0.5f, -0.5f, -0.5f,   
-		0.5f, -0.5f, -0.5f,    
-		0.5f, -0.5f,  0.5f,    
-		0.5f, -0.5f,  0.5f,    
-		-0.5f, -0.5f,  0.5f,  
-		-0.5f, -0.5f, -0.5f,  
-
-		-0.5f,  0.5f, -0.5f,  
-		0.5f,  0.5f, -0.5f,    
-		0.5f,  0.5f,  0.5f,   
-		0.5f,  0.5f,  0.5f,    
-		-0.5f,  0.5f,  0.5f,   
-		-0.5f,  0.5f, -0.5f,  
-	};
-#endif
 #if 0
 	float data[3 * 4 * 6] = {
 		-1.0f,  1.0f,  1.0f,
@@ -192,7 +143,7 @@ void obj::Cube::projDraw()
 	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
 	glUniform4f(vertexColorLocation, 0.5f, 0.5f, 1.0f, 1.0f);
 
-	glm::mat4 rot = glm::eulerAngleYXZ(_xAngle, _yAngle, _zAngle);
+	glm::mat4 rot = glm::eulerAngleYXZ(_x_angle, _y_angle, _z_angle);
 	//glm::mat4 size = glm::
 
 	GLint k_loc = glGetUniformLocation(_shader, "k");
@@ -239,7 +190,7 @@ void obj::Cube::customDraw()
 	glMatrixMode(GL_MODELVIEW);
 	//glRotatef(0.7f, 0.0f, 1.0, 0.0f);
 	
-	glm::mat4 rot = glm::eulerAngleYXZ(_xAngle, _yAngle, _zAngle);
+	glm::mat4 rot = glm::eulerAngleYXZ(_x_angle, _y_angle, _z_angle);
 
 	GLint vertexColorLocation = glGetUniformLocation(_shader, "myColor");
 	glUniform4f(vertexColorLocation, 0.5f, 0.5f, 1.0f, 1.0f);
@@ -260,9 +211,9 @@ void obj::Cube::customDraw()
 void obj::Cube::draw()
 {
 	GLfloat timeValue = (GLfloat)glfwGetTime();
-	float k = _size;
+	float k = _size_koefficient;
 	const int SZ = 16;
-	float fi = _xAngle; //timeValue;
+	float fi = _x_angle; //timeValue;
 	float norm[SZ] = {
 		1.0f,   0.0f,     0.0f,     0.0f,
 		0.0f,  cos(fi),  sin(fi),   0.0f,
@@ -282,7 +233,7 @@ void obj::Cube::draw()
 	GLint y_angle = glGetUniformLocation(_shader, "y_angle");
 	GLint k_loc = glGetUniformLocation(_shader, "k");
 
-	glUniform1f(y_angle, timeValue+_yAngle);
+	glUniform1f(y_angle, timeValue+_y_angle);
 	glUseProgram(_shader);
 	glUniform4f(vertexColorLocation, 0.0f, greenValue, 1.0f, 1.0f);
 	//glMatrixMode(GL_PROJECTION);
@@ -313,41 +264,4 @@ void obj::Cube::draw()
 void obj::Cube::setView(GLint view)
 {
 	_view = view;
-}
-
-void obj::Cube::setSize(float k)
-{
-	_size = k;
-}
-
-float obj::Cube::getSize()
-{
-	return _size;
-}
-
-void obj::Cube::setRotation(float x_angle, float y_angle, float z_angle)
-{
-	_xAngle = x_angle;
-	_yAngle = y_angle;
-	_zAngle = z_angle;
-}
-
-std::tuple<float, float, float> obj::Cube::getAngles()
-{
-	return std::tuple<float, float, float>(_xAngle, _yAngle, _zAngle);
-}
-
-void obj::Cube::setXangle(float x_angle)
-{
-	_xAngle = x_angle;
-}
-
-void obj::Cube::setYangle(float y_angle)
-{
-	_yAngle = y_angle;
-}
-
-void obj::Cube::setZangle(float z_angle)
-{
-	_zAngle = z_angle;
 }
