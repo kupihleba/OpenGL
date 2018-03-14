@@ -175,7 +175,6 @@ void obj::Cube::projDraw()
 	glBindVertexArray(0);
 }
 
-
 void obj::Cube::customDraw()
 {
 	glUseProgram(_shader);
@@ -205,7 +204,7 @@ void obj::Cube::customDraw()
 
 void obj::Cube::simpleDraw() {
 	glUseProgram(_shader);
-	glm::mat4 res = /*tranlation*/ _rotation * _size;
+	glm::mat4 res = _getTransformations();
 
 	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
 	GLint myColor = glGetUniformLocation(_shader, "myColor");

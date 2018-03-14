@@ -10,6 +10,7 @@ Object::Object()
 {
 	setSize(1.0f);
 	setRotation(0.0f, 0.0f, 0.0f);
+	clsTransformation();
 }
 
 Object::~Object()
@@ -58,7 +59,22 @@ void obj::Object::setZangle(float z_angle)
 	setRotation(_x_angle, _y_angle, _z_angle);
 }
 
+void obj::Object::setTransrmation(glm::mat4 m)
+{
+	_custom_transformation = m;
+}
+
+void obj::Object::clsTransformation()
+{
+	_custom_transformation = glm::mat4(1.0f);
+}
+
 void obj::Object::draw()
 {
 	throw std::exception("Method draw was not defined!");
+}
+
+glm::mat4 obj::Object::_getTransformations()
+{
+	return _custom_transformation * _rotation * _size;
 }

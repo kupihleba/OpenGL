@@ -34,9 +34,6 @@ MyEngine::MyEngine()
 	_basicShader = _shaderFactory.loadShader("res/shaders/basic.shader");
 	_staticShader = _shaderFactory.loadShader("res/shaders/static.shader");
 
-	//glUseProgram(_basicShader);
-	//glUseProgram(_staticShader);
-
 	//glViewport(0, 0, _activityWidth, _activityHeight);
 
 	if (_activityWidth > _activityHeight) {
@@ -148,6 +145,19 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		case GLFW_KEY_DOWN:
 			y_angle = std::get<1>(context->_cube->getRotation());
 			context->_cube->setYangle(y_angle - 0.05);
+			break;
+
+		case GLFW_KEY_W:
+			
+			break;
+		case GLFW_KEY_S:
+
+			break;
+		case GLFW_KEY_A:
+			
+			break;
+		case GLFW_KEY_D:
+			
 			break;
 		default:
 			break;

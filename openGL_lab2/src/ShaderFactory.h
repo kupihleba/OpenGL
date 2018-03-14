@@ -11,11 +11,24 @@ class ShaderFactory
 public:
 	ShaderFactory();
 	~ShaderFactory();
+
+	/// <summary>
+	/// Loads the shader from the given filepath
+	/// </summary>
+	/// <returns>
+	/// Shader id
+	/// </returns>
 	GLuint loadShader(const string & filepath);
-	GLuint getBasicShader();
+
+	/// <summary>
+	/// Loads the basic shader
+	/// </summary>
+	/// <returns>
+	/// Shader id
+	/// </returns>
+	/*static*/ GLuint getBasicShader();
 
 private:
 	GLuint _createShader(string & vertexShader, string & fragmentShader);
 	GLuint _compileShader(GLuint type, const string & src);
 };
-
