@@ -85,12 +85,13 @@ void MyEngine::_draw()
 	}
 	_cube->setView(_type);
 	_cube->draw();
-
+	
 	glViewport(0, 0, 100, 100);
+	_miniCube->setTranslation(0.25f, 0.4f, 0.0f);
 	_miniCube->simpleDraw();
 
-	glViewport(0, 100, 600, 600);
-	_extraCube->projDraw();
+	//glViewport(0, 100, 600, 600);
+	//_extraCube->projDraw();
 }
 
 void MyEngine::_mainLoop()
@@ -123,28 +124,28 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		switch (key)
 		{
 		case GLFW_KEY_KP_ADD:
-			context->_cube->setSize(context->_cube->getSize() + 0.05);
+			context->_cube->setSize(context->_cube->getSize() + 0.05f);
 			break;
 		case GLFW_KEY_KP_SUBTRACT:
-			context->_cube->setSize(context->_cube->getSize() - 0.05);
+			context->_cube->setSize(context->_cube->getSize() - 0.05f);
 			break;
 
 		case GLFW_KEY_LEFT:
 			x_angle = std::get<0>(context->_cube->getRotation());
-			context->_cube->setXangle(x_angle + 0.02);
+			context->_cube->setXangle(x_angle + 0.02f);
 			break;
 		case GLFW_KEY_RIGHT:
 			x_angle = std::get<0>(context->_cube->getRotation());
-			context->_cube->setXangle(x_angle - 0.02);
+			context->_cube->setXangle(x_angle - 0.02f);
 			break;
 
 		case GLFW_KEY_UP:
 			y_angle = std::get<1>(context->_cube->getRotation());
-			context->_cube->setYangle(y_angle + 0.05);
+			context->_cube->setYangle(y_angle + 0.05f);
 			break;
 		case GLFW_KEY_DOWN:
 			y_angle = std::get<1>(context->_cube->getRotation());
-			context->_cube->setYangle(y_angle - 0.05);
+			context->_cube->setYangle(y_angle - 0.05f);
 			break;
 
 		case GLFW_KEY_W:

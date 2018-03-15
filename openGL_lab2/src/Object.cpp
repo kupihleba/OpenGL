@@ -4,11 +4,14 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <iostream>
+
 using namespace obj;
 
 Object::Object()
 {
 	setSize(1.0f);
+	setTranslation(0.0f, 0.0f, 0.0f);
 	setRotation(0.0f, 0.0f, 0.0f);
 	clsTransformation();
 }
@@ -31,6 +34,54 @@ float Object::getSize()
 std::tuple<float, float, float> obj::Object::getRotation()
 {
 	return std::tuple<float, float, float>(_x_angle, _y_angle, _z_angle);
+}
+
+void obj::Object::setTranslation(float x, float y, float z)
+{
+	_x = x;
+	_y = y;
+	_z = z;
+	_translation = glm::transpose(glm::translate(glm::vec3(_x, _y, _z)));
+	//_translation = glm::translate(glm::vec3(_x, _y, _z));
+	/*for (int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
+			std::cout << _translation[j][i] << ' ';
+		}
+		std::cout << std::endl;
+	}*/
+
+#if 0
+	float norm[] = {
+		1.0f,   0.0f,    0.0f,   0.0f,
+		0.0f,   1.0f,    0.0f,   0.8f,
+		0.0f,   0.0f,    1.0f,   0.1f,
+		0.0f,   0.0f,    0.0f,   1.0f,
+	};
+
+	_translation = glm::make_mat4(norm);
+#endif
+	//_translation = glm::translate(glm::vec3(_x, _y, _z));
+	
+}
+
+void obj::Object::setXpos(float x_pos)
+{
+	setTranslation(x_pos, _y, _z);
+}
+
+void obj::Object::setYpos(float y_pos)
+{
+	setTranslation(_x, y_pos, _z);
+}
+
+void obj::Object::setZpos(float z_pos)
+{
+	setTranslation(_x, _y, z_pos);
+}
+
+std::tuple<float, float, float> obj::Object::getTranslation()
+{
+	return std::tuple<float, float, float>(_x, _y, _z);
 }
 
 void Object::setRotation(float x_angle, float y_angle, float z_angle)
@@ -76,5 +127,7 @@ void obj::Object::draw()
 
 glm::mat4 obj::Object::_getTransformations()
 {
-	return _custom_transformation * _rotation * _size;
+	//glm::vec4 position = glm::vec4(glm::vec3(_x, _y, _z), 1.0f);
+	
+	return  _translation /** _custom_transformation * _rotation * _size*/;
 }

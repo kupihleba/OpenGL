@@ -24,10 +24,6 @@ namespace obj {
 		/// </returns>
 		float getSize();
 
-		/// <returns>
-		/// Tuple of angles between Ox, Oy, Oz
-		/// </returns>
-		std::tuple<float, float, float> getRotation();
 
 		/// <summary>
 		/// Set the angles with Ox, Oy, Oz for rotation matrix
@@ -36,6 +32,24 @@ namespace obj {
 		void setXangle(float x_angle);
 		void setYangle(float y_angle);
 		void setZangle(float z_angle);
+
+		/// <returns>
+		/// Tuple of angles between Ox, Oy, Oz
+		/// </returns>
+		std::tuple<float, float, float> getRotation();
+
+		/// <summary>
+		/// Set the position of the object
+		/// </summary>
+		void setTranslation(float x, float y, float z);
+		void setXpos(float x_pos);
+		void setYpos(float y_pos);
+		void setZpos(float z_pos);
+
+		/// <returns>
+		/// Tuple of coordinates x, y, z
+		/// </returns>
+		std::tuple<float, float, float> getTranslation();
 
 
 		/// <summary>
@@ -50,12 +64,20 @@ namespace obj {
 		virtual void draw();
 
 	protected:
+		
+		// Size:
 		float _size_koefficient;
 		glm::mat4 _size;
-		glm::mat4 _custom_transformation;
 
+		// Position:
+		float _x, _y, _z;
+		glm::mat4 _translation;
+
+		// Rotation:
 		float _x_angle, _y_angle, _z_angle;
 		glm::mat4 _rotation;
+
+		glm::mat4 _custom_transformation;
 
 		glm::mat4 _getTransformations();
 	};
