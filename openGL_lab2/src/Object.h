@@ -41,7 +41,7 @@ namespace obj {
 		/// <summary>
 		/// Set the position of the object
 		/// </summary>
-		void setTranslation(float x, float y, float z);
+		void setPosition(float x, float y, float z);
 		void setXpos(float x_pos);
 		void setYpos(float y_pos);
 		void setZpos(float z_pos);
@@ -49,13 +49,13 @@ namespace obj {
 		/// <returns>
 		/// Tuple of coordinates x, y, z
 		/// </returns>
-		std::tuple<float, float, float> getTranslation();
+		std::tuple<float, float, float> getPosition();
 
 
 		/// <summary>
 		/// Set custom transformation of object
 		/// </summary>
-		void setTransrmation(glm::mat4 m);
+		void setTransformation(glm::mat4 m);
 		void clsTransformation();
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace obj {
 
 		// Position:
 		float _x, _y, _z;
-		glm::mat4 _translation;
+		glm::mat4 _position;
 
 		// Rotation:
 		float _x_angle, _y_angle, _z_angle;

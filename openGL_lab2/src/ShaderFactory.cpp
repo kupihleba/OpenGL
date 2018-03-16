@@ -6,7 +6,10 @@
 #define use(ns) using ns;
 use(std::cout) use(std::endl)
 
-ShaderFactory::ShaderFactory() {}
+ShaderFactory::ShaderFactory() 
+{
+	_basicShader = 0;
+}
 
 ShaderFactory::~ShaderFactory() {}
 
@@ -83,5 +86,8 @@ GLuint ShaderFactory::loadShader(const string & path)
 
 GLuint ShaderFactory::getBasicShader()
 {
-	return loadShader("res/shaders/factory/basic.shader");
+	if (!_basicShader) {
+		_basicShader = loadShader("res/shaders/factory/basic.shader");
+	}
+	return _basicShader;
 }

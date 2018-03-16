@@ -31,4 +31,5 @@ public:
 private:
 	GLuint _createShader(string & vertexShader, string & fragmentShader);
 	GLuint _compileShader(GLuint type, const string & src);
+	GLuint _basicShader;
 };

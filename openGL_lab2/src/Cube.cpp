@@ -124,6 +124,7 @@ Cube::Cube(GLuint shader):Object()
 
 Cube::~Cube() {}
 
+#if 0
 void obj::Cube::projDraw()
 {
 	glUseProgram(_shader);
@@ -174,7 +175,9 @@ void obj::Cube::projDraw()
 	glDrawArrays(GL_QUADS, 0, 24);
 	glBindVertexArray(0);
 }
+#endif
 
+#if 0
 void obj::Cube::customDraw()
 {
 	glUseProgram(_shader);
@@ -201,6 +204,7 @@ void obj::Cube::customDraw()
 	glDrawArrays(GL_QUADS, 0, 24);
 	glBindVertexArray(0);
 }
+#endif
 
 void obj::Cube::simpleDraw() {
 	glUseProgram(_shader);
@@ -214,10 +218,10 @@ void obj::Cube::simpleDraw() {
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 
 	glBindVertexArray(_VBufObj);
-	glDrawArrays(GL_QUADS, 0, 24);
+	glDrawArrays(GL_QUADS, 0, DIM * EDGES * PT_PER_EDGE);
 	glBindVertexArray(0);
 }
-
+#if 0
 void obj::Cube::draw()
 {
 	GLfloat timeValue = (GLfloat)glfwGetTime();
@@ -270,6 +274,7 @@ void obj::Cube::draw()
 	glDrawArrays(GL_QUADS, 0, 24);
 	glBindVertexArray(0);
 }
+#endif
 
 void obj::Cube::setView(GLint view)
 {

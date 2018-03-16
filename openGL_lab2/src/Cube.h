@@ -19,9 +19,11 @@ namespace obj {
 		void setView(GLint view);
 
 		// TODO: REMOVE MULTIPLE METHODS!
+#if 0
 		void draw();
 		void Cube::customDraw();
 		void Cube::projDraw();
+#endif
 
 		void simpleDraw();
 

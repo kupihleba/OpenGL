@@ -4,14 +4,12 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <iostream>
-
 using namespace obj;
 
 Object::Object()
 {
 	setSize(1.0f);
-	setTranslation(0.0f, 0.0f, 0.0f);
+	setPosition(0.0f, 0.0f, 0.0f);
 	setRotation(0.0f, 0.0f, 0.0f);
 	clsTransformation();
 }
@@ -36,50 +34,31 @@ std::tuple<float, float, float> obj::Object::getRotation()
 	return std::tuple<float, float, float>(_x_angle, _y_angle, _z_angle);
 }
 
-void obj::Object::setTranslation(float x, float y, float z)
+void obj::Object::setPosition(float x, float y, float z)
 {
 	_x = x;
 	_y = y;
 	_z = z;
-	_translation = glm::transpose(glm::translate(glm::vec3(_x, _y, _z)));
+	_position = glm::transpose(glm::translate(glm::vec3(_x, _y, _z)));
 	//_translation = glm::translate(glm::vec3(_x, _y, _z));
-	/*for (int j = 0; j < 4; j++) {
-		for (int i = 0; i < 4; i++) {
-			std::cout << _translation[j][i] << ' ';
-		}
-		std::cout << std::endl;
-	}*/
-
-#if 0
-	float norm[] = {
-		1.0f,   0.0f,    0.0f,   0.0f,
-		0.0f,   1.0f,    0.0f,   0.8f,
-		0.0f,   0.0f,    1.0f,   0.1f,
-		0.0f,   0.0f,    0.0f,   1.0f,
-	};
-
-	_translation = glm::make_mat4(norm);
-#endif
-	//_translation = glm::translate(glm::vec3(_x, _y, _z));
-	
 }
 
 void obj::Object::setXpos(float x_pos)
 {
-	setTranslation(x_pos, _y, _z);
+	setPosition(x_pos, _y, _z);
 }
 
 void obj::Object::setYpos(float y_pos)
 {
-	setTranslation(_x, y_pos, _z);
+	setPosition(_x, y_pos, _z);
 }
 
 void obj::Object::setZpos(float z_pos)
 {
-	setTranslation(_x, _y, z_pos);
+	setPosition(_x, _y, z_pos);
 }
 
-std::tuple<float, float, float> obj::Object::getTranslation()
+std::tuple<float, float, float> obj::Object::getPosition()
 {
 	return std::tuple<float, float, float>(_x, _y, _z);
 }
@@ -94,23 +73,20 @@ void Object::setRotation(float x_angle, float y_angle, float z_angle)
 
 void obj::Object::setXangle(float x_angle)
 {
-	_x_angle = x_angle;
-	setRotation(_x_angle, _y_angle, _z_angle);
+	setRotation(x_angle, _y_angle, _z_angle);
 }
 
 void obj::Object::setYangle(float y_angle)
 {
-	_y_angle = y_angle;
-	setRotation(_x_angle, _y_angle, _z_angle);
+	setRotation(_x_angle, y_angle, _z_angle);
 }
 
 void obj::Object::setZangle(float z_angle)
 {
-	_z_angle = z_angle;
-	setRotation(_x_angle, _y_angle, _z_angle);
+	setRotation(_x_angle, _y_angle, z_angle);
 }
 
-void obj::Object::setTransrmation(glm::mat4 m)
+void obj::Object::setTransformation(glm::mat4 m)
 {
 	_custom_transformation = m;
 }
@@ -126,8 +102,6 @@ void obj::Object::draw()
 }
 
 glm::mat4 obj::Object::_getTransformations()
-{
-	//glm::vec4 position = glm::vec4(glm::vec3(_x, _y, _z), 1.0f);
-	
-	return  _translation /** _custom_transformation * _rotation * _size*/;
+{	
+	return  _rotation * _size * _custom_transformation * _position; // The order is from left to right!
 }

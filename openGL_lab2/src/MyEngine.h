@@ -34,7 +34,7 @@ private:
 
 	shared_ptr<obj::Cube> _cube;
 	shared_ptr<obj::Cube> _miniCube;
-	shared_ptr<obj::Cube> _extraCube;
+	shared_ptr<obj::Cube> _projCube;
 
 	void _mainLoop();
 
