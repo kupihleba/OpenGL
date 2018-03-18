@@ -17,7 +17,7 @@ namespace obj {
 		/// <summary>
 		/// Sets the scale koefficient
 		/// </summary>
-		void setSize(float k);
+		Object & setSize(float k);
 
 		/// <returns>
 		/// The scale koefficient
@@ -28,10 +28,10 @@ namespace obj {
 		/// <summary>
 		/// Set the angles with Ox, Oy, Oz for rotation matrix
 		/// </summary>
-		void setRotation(float x_angle, float y_angle, float z_angle);
-		void setXangle(float x_angle);
-		void setYangle(float y_angle);
-		void setZangle(float z_angle);
+		Object & setRotation(float x_angle, float y_angle, float z_angle);
+		Object & setXangle(float x_angle);
+		Object & setYangle(float y_angle);
+		Object & setZangle(float z_angle);
 
 		/// <returns>
 		/// Tuple of angles between Ox, Oy, Oz
@@ -41,10 +41,10 @@ namespace obj {
 		/// <summary>
 		/// Set the position of the object
 		/// </summary>
-		void setPosition(float x, float y, float z);
-		void setXpos(float x_pos);
-		void setYpos(float y_pos);
-		void setZpos(float z_pos);
+		Object & setPosition(float x, float y, float z);
+		Object & setXpos(float x_pos);
+		Object & setYpos(float y_pos);
+		Object & setZpos(float z_pos);
 
 		/// <returns>
 		/// Tuple of coordinates x, y, z
@@ -60,7 +60,7 @@ namespace obj {
 		/// <summary>
 		/// Set custom transformation of object
 		/// </summary>
-		void setTransformation(glm::mat4 m);
+		Object & setTransformation(glm::mat4 m);
 		void clsTransformation();
 
 		/// <summary>

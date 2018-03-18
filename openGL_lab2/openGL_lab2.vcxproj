@@ -132,10 +132,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Spiral.cpp" />
+    <ClCompile Include="src\obj\Spiral.cpp" />
     <ClCompile Include="src\ShaderFactory.cpp" />
-    <ClCompile Include="src\Object.cpp" />
-    <ClCompile Include="src\Cube.cpp" />
+    <ClCompile Include="src\obj\Object.cpp" />
+    <ClCompile Include="src\obj\Cube.cpp" />
     <ClCompile Include="src\MyEngine.cpp" />
     <ClCompile Include="src\main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)dep\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -143,10 +143,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Spiral.h" />
+    <ClInclude Include="src\obj\Spiral.h" />
     <ClInclude Include="src\ShaderFactory.h" />
-    <ClInclude Include="src\Object.h" />
-    <ClInclude Include="src\Cube.h" />
+    <ClInclude Include="src\obj\Object.h" />
+    <ClInclude Include="src\obj\Cube.h" />
     <ClInclude Include="src\MyEngine.h" />
   </ItemGroup>
   <ItemGroup>

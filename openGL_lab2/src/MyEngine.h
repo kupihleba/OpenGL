@@ -2,7 +2,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "Cube.h"
+#include "obj/Cube.h"
+#include "obj/Spiral.h"
 #include "ShaderFactory.h"
 #include <memory>
 
@@ -32,9 +33,13 @@ private:
 
 	ShaderFactory _shaderFactory;
 
+	shared_ptr<obj::Object> _focus;
+
 	shared_ptr<obj::Cube> _cube;
 	shared_ptr<obj::Cube> _miniCube;
 	shared_ptr<obj::Cube> _projCube;
+
+	shared_ptr<obj::Spiral> _spiral;
 
 	void _mainLoop();
 

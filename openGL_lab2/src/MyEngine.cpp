@@ -55,19 +55,21 @@ void MyEngine::_initObjects()
 	_miniCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	_projCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	
-	_cube->setXangle(0.5f);
-	_cube->setYangle(0.5f);
-	_cube->setXangle(0.5f);
-	_cube->setXangle(0.5f);
+	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
 
-	_miniCube->setXangle(0.5f);
-	_miniCube->setYangle(0.5f);
-	_miniCube->setSize(0.2f);
-	_miniCube->setPosition(0.9f, -0.7f, 0.0f);
+	_cube->setXangle(0.5f)
+		.setYangle(0.5f)
+		.setXangle(0.5f)
+		.setXangle(0.5f);
 
-	_projCube->setXangle(0.5f);
-	_projCube->setYangle(0.5f);
-	_projCube->setSize(0.2f);
+	_miniCube->setXangle(0.5f)
+		.setYangle(0.5f)
+		.setSize(0.2f)
+		.setPosition(1.2f, -0.7f, 0.0f);
+
+	_projCube->setXangle(0.5f)
+		.setYangle(0.5f)
+		.setSize(0.2f);
 
 	float proj[] = {
 		1.0f,   0.0f,  0.0f,  0.0f,
@@ -75,18 +77,37 @@ void MyEngine::_initObjects()
 		0.0f,   0.0f,  1.0f,  0.0f,
 	   -0.9f,  -0.9f,  0.9f,  1.0f,
 	};
-	_projCube->setTransformation(glm::make_mat4(proj));
-	_projCube->setPosition(-0.9f, -0.7f, 0.0f);
+	_projCube->setTransformation(glm::make_mat4(proj))
+		.setPosition(-1.2f, -0.7f, 0.0f);
+
 }
 
 void MyEngine::_destroyObjects() {}
 
+
 void MyEngine::_draw()
 {
-	_cube->setView(_type);
-	_cube->simpleDraw();
-	_projCube->simpleDraw();
-	_miniCube->simpleDraw();
+	enum Show {
+		CUBE,
+		SPIRAL
+	};
+	Show view = CUBE;
+		switch (view)
+		{
+		case CUBE:
+			_focus = std::dynamic_pointer_cast<obj::Object, obj::Cube>(_cube);
+			_cube->setView(_type);
+			_cube->draw();
+			_projCube->draw();
+			_miniCube->draw();
+			break;
+		case SPIRAL:
+			_focus = _spiral;
+			_spiral->draw();
+			break;
+		default:
+			break;
+		}	
 }
 
 void MyEngine::_mainLoop()
@@ -123,51 +144,51 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		switch (key)
 		{
 		case GLFW_KEY_KP_ADD:
-			context->_cube->setSize(context->_cube->getSize() + SIZE_STEP);
+			context->_focus->setSize(context->_focus->getSize() + SIZE_STEP);
 			break;
 		case GLFW_KEY_KP_SUBTRACT:
-			context->_cube->setSize(context->_cube->getSize() - SIZE_STEP);
+			context->_focus->setSize(context->_focus->getSize() - SIZE_STEP);
 			break;
 
 		case GLFW_KEY_LEFT:
-			x_angle = std::get<0>(context->_cube->getRotation());
-			context->_cube->setXangle(x_angle - ROT_STEP);
+			x_angle = std::get<0>(context->_focus->getRotation());
+			context->_focus->setXangle(x_angle - ROT_STEP);
 			context->_projCube->setXangle(x_angle - ROT_STEP);
 			break;
 		case GLFW_KEY_RIGHT:
-			x_angle = std::get<0>(context->_cube->getRotation());
-			context->_cube->setXangle(x_angle + ROT_STEP);
+			x_angle = std::get<0>(context->_focus->getRotation());
+			context->_focus->setXangle(x_angle + ROT_STEP);
 			context->_projCube->setXangle(x_angle + ROT_STEP);
 			break;
 
 		case GLFW_KEY_UP:
-			y_angle = std::get<1>(context->_cube->getRotation());
-			context->_cube->setYangle(y_angle - ROT_STEP);
+			y_angle = std::get<1>(context->_focus->getRotation());
+			context->_focus->setYangle(y_angle - ROT_STEP);
 			context->_projCube->setYangle(y_angle - ROT_STEP);
 
 			break;
 		case GLFW_KEY_DOWN:
-			y_angle = std::get<1>(context->_cube->getRotation());
-			context->_cube->setYangle(y_angle + ROT_STEP);
+			y_angle = std::get<1>(context->_focus->getRotation());
+			context->_focus->setYangle(y_angle + ROT_STEP);
 			context->_projCube->setYangle(y_angle + ROT_STEP);
 			break;
 
 		case GLFW_KEY_W:
-			y = std::get<1>(context->_cube->getPosition());
-			context->_cube->setYpos(y + POS_STEP);
+			y = std::get<1>(context->_focus->getPosition());
+			context->_focus->setYpos(y + POS_STEP);
 			break;
 		case GLFW_KEY_S:
-			y = std::get<1>(context->_cube->getPosition());
-			context->_cube->setYpos(y - POS_STEP);
+			y = std::get<1>(context->_focus->getPosition());
+			context->_focus->setYpos(y - POS_STEP);
 			break;
 
 		case GLFW_KEY_A:
-			x = std::get<0>(context->_cube->getPosition());
-			context->_cube->setXpos(x - POS_STEP);
+			x = std::get<0>(context->_focus->getPosition());
+			context->_focus->setXpos(x - POS_STEP);
 			break;
 		case GLFW_KEY_D:
-			x = std::get<0>(context->_cube->getPosition());
-			context->_cube->setXpos(x + POS_STEP);
+			x = std::get<0>(context->_focus->getPosition());
+			context->_focus->setXpos(x + POS_STEP);
 			break;
 		default:
 			break;
