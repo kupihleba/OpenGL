@@ -23,11 +23,11 @@ Spiral::Spiral(GLuint shader)
 	_f = [](float u, float v) -> Coords {
 		const float k = 1.0f;
 		const float m = 1.5f;
-		const float vl = 5.0f;
+		const float vl = 1.0f;
 
 		return Coords(
 			k*cos(u), //+ m*cos(v),
-			vl*v,
+			vl*v + k*u,
 			k*sin(u));//-2*m*abs(sin(v)));
 	};
 	const int precision = 50;

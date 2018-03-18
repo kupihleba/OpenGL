@@ -91,7 +91,7 @@ void MyEngine::_draw()
 		CUBE,
 		SPIRAL
 	};
-	Show view = CUBE;
+	Show view = SPIRAL;
 		switch (view)
 		{
 		case CUBE:
@@ -102,6 +102,8 @@ void MyEngine::_draw()
 			_miniCube->draw();
 			break;
 		case SPIRAL:
+			_focus = std::dynamic_pointer_cast<obj::Object, obj::Spiral>(_spiral);
+
 			_focus = _spiral;
 			_spiral->draw();
 			break;
