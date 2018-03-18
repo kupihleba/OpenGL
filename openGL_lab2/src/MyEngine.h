@@ -18,8 +18,8 @@ public:
 
 private:
 	GLFWwindow *_activity;
-	int _activityWidth = 720;
-	int _activityHeight = 480;
+	int _activityWidth = 1280;
+	int _activityHeight = 768;
 
 	GLuint _basicShader;
 	GLuint _staticShader;

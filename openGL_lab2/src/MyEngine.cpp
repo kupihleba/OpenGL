@@ -192,6 +192,15 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 			x = std::get<0>(context->_focus->getPosition());
 			context->_focus->setXpos(x + POS_STEP);
 			break;
+
+		case GLFW_KEY_Q:
+			z = std::get<2>(context->_focus->getPosition());
+			context->_focus->setZpos(z + POS_STEP);
+			break;
+		case GLFW_KEY_E:
+			z = std::get<2>(context->_focus->getPosition());
+			context->_focus->setZpos(z - POS_STEP);
+			break;
 		default:
 			break;
 		}

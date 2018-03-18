@@ -17,29 +17,39 @@ using namespace obj;
 
 Spiral::Spiral(GLuint shader)
 {
+	using std::get;
 	_shader = shader;
-	_view = GL_FILL;
+	_view = GL_LINE;
 
 	_f = [](float u, float v) -> Coords {
-		const float k = 1.0f;
-		const float m = 1.5f;
-		const float vl = 1.0f;
+		const float k = 0.4f;
+		const float m = 1.0f;
 
 		return Coords(
-			k*cos(u), //+ m*cos(v),
-			vl*v + k*u,
-			k*sin(u));//-2*m*abs(sin(v)));
+			k*cos(u) + m*cos(v),
+			k*v,
+			k*sin(u) + m*sin(v));
 	};
 	const int precision = 50;
 	float delta = 2 * PI / precision;
-	for (float v = 0; v < 2 * PI; v += delta) {
-		for (float u = 0; u < 2 * PI; u += delta) {
-			Coords coords = _f(u, v);
+	Coords coords;
+	for (float v = 0; v < 2 * PI * 5; v += delta) {
+		for (float u = 0; u < 2 * PI; u += 2*delta) {
+			coords = _f(u, v);
+			_vertices.push_back(prt(get<0>(coords)));
+			_vertices.push_back(prt(get<1>(coords)));
+			_vertices.push_back(prt(get<2>(coords)));
+			coords = _f(u, v + delta);
 			_vertices.push_back(prt(std::get<0>(coords)));
 			_vertices.push_back(prt(std::get<1>(coords)));
 			_vertices.push_back(prt(std::get<2>(coords)));
+			coords = _f(u + delta, v);
+			_vertices.push_back(prt(get<0>(coords)));
+			_vertices.push_back(prt(get<1>(coords)));
+			_vertices.push_back(prt(get<2>(coords)));
 		}
 	}
+	
 
 	glGenBuffers(1, &_VBufObj);
 
@@ -65,7 +75,7 @@ void obj::Spiral::draw()
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 
 	glBindVertexArray(_VBufObj);
-	glDrawArrays(GL_POINTS, 0, _vertices.size());
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, _vertices.size());
 	glBindVertexArray(0);
 }
 
