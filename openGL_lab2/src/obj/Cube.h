@@ -16,17 +16,13 @@ namespace obj {
 		Cube(GLuint shader);
 		~Cube();
 
-		void setView(GLint view);
-
 		void draw();
 
 	private:
 		GLuint _VBufObj;
-		GLuint _VArrObj;
+		// GLuint _VArrObj;
 
 		GLuint _shader;
-
-		GLint _view;
 	};
 
 }

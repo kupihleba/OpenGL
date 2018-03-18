@@ -14,6 +14,7 @@ Object::Object()
 	setPosition(0.0f, 0.0f, 0.0f);
 	setRotation(0.0f, 0.0f, 0.0f);
 	clsTransformation();
+	_view = GL_LINE;
 }
 
 Object::~Object()
@@ -127,6 +128,16 @@ void obj::Object::clsTransformation()
 void obj::Object::draw()
 {
 	throw std::exception("Method draw was not defined!");
+}
+
+void obj::Object::setView(GLint view)
+{
+	_view = view;	
+}
+
+GLint obj::Object::getView()
+{
+	return _view;
 }
 
 glm::mat4 obj::Object::_getTransformations()

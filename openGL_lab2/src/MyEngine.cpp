@@ -56,6 +56,11 @@ void MyEngine::_initObjects()
 	_projCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	
 	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
+	_projSpiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
+
+	_spiral->setPosition(0.0f, -0.7f, 0.0f)
+		.setSize(0.25f)
+		.setYangle(0.5f);
 
 	_cube->setXangle(0.5f)
 		.setYangle(0.5f)
@@ -80,6 +85,10 @@ void MyEngine::_initObjects()
 	_projCube->setTransformation(glm::make_mat4(proj))
 		.setPosition(-1.2f, -0.7f, 0.0f);
 
+	_projSpiral->setPosition(-1.2f, -0.7f, 0.0f)
+		.setSize(0.10f)
+		.setYangle(0.5f)
+		.setTransformation(glm::make_mat4(proj));
 }
 
 void MyEngine::_destroyObjects() {}
@@ -87,25 +96,19 @@ void MyEngine::_destroyObjects() {}
 
 void MyEngine::_draw()
 {
-	enum Show {
-		CUBE,
-		SPIRAL
-	};
-	Show view = SPIRAL;
-		switch (view)
+		switch (_mode)
 		{
 		case CUBE:
 			_focus = std::dynamic_pointer_cast<obj::Object, obj::Cube>(_cube);
-			_cube->setView(_type);
 			_cube->draw();
 			_projCube->draw();
 			_miniCube->draw();
 			break;
 		case SPIRAL:
 			_focus = std::dynamic_pointer_cast<obj::Object, obj::Spiral>(_spiral);
-
 			_focus = _spiral;
 			_spiral->draw();
+			_projSpiral->draw();
 			break;
 		default:
 			break;
@@ -134,10 +137,10 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 
 	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
-		if (context->_type == GL_FILL) {
-			context->_type = GL_LINE;
+		if (context->_focus->getView() == GL_FILL) {
+			context->_focus->setView(GL_LINE);
 		} else {
-			context->_type = GL_FILL;
+			context->_focus->setView(GL_FILL);
 		}
 	}
 	else {
@@ -156,23 +159,27 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 			x_angle = std::get<0>(context->_focus->getRotation());
 			context->_focus->setXangle(x_angle - ROT_STEP);
 			context->_projCube->setXangle(x_angle - ROT_STEP);
+			context->_projSpiral->setXangle(x_angle - ROT_STEP);
 			break;
 		case GLFW_KEY_RIGHT:
 			x_angle = std::get<0>(context->_focus->getRotation());
 			context->_focus->setXangle(x_angle + ROT_STEP);
 			context->_projCube->setXangle(x_angle + ROT_STEP);
+			context->_projSpiral->setXangle(x_angle + ROT_STEP);
 			break;
 
 		case GLFW_KEY_UP:
 			y_angle = std::get<1>(context->_focus->getRotation());
 			context->_focus->setYangle(y_angle - ROT_STEP);
 			context->_projCube->setYangle(y_angle - ROT_STEP);
-
+			context->_projSpiral->setYangle(y_angle - ROT_STEP);
 			break;
+
 		case GLFW_KEY_DOWN:
 			y_angle = std::get<1>(context->_focus->getRotation());
 			context->_focus->setYangle(y_angle + ROT_STEP);
 			context->_projCube->setYangle(y_angle + ROT_STEP);
+			context->_projSpiral->setYangle(y_angle + ROT_STEP);
 			break;
 
 		case GLFW_KEY_W:
@@ -200,6 +207,17 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		case GLFW_KEY_E:
 			z = std::get<2>(context->_focus->getPosition());
 			context->_focus->setZpos(z - POS_STEP);
+			break;
+
+		case GLFW_KEY_TAB:
+			if (action == GLFW_PRESS) {
+				if (context->_mode == CUBE) {
+					context->_mode = SPIRAL;
+				}
+				else {
+					context->_mode = CUBE;
+				}
+			}
 			break;
 		default:
 			break;

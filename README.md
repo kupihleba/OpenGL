@@ -1,7 +1,8 @@
 # OpenGL4 labs
 
-Models:
-* 3d cube
+3D Models:
+* cube
+* spiral tube
 
 Technologies & Approach:
 * glm

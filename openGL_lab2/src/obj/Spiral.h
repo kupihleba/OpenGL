@@ -12,6 +12,7 @@ namespace obj {
 		Spiral(GLuint shader);
 		
 		void draw();
+		void reconstruct(int precision);
 
 		~Spiral();
 
@@ -21,7 +22,7 @@ namespace obj {
 		std::vector<float> _vertices;
 		GLuint _VBufObj;
 
-		GLuint _view;
+		void _build(int precision, float r, float R, float len);
 
 		GLuint _shader;
 

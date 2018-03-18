@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <tuple>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 namespace obj {
 
@@ -23,7 +25,6 @@ namespace obj {
 		/// The scale koefficient
 		/// </returns>
 		float getSize();
-
 
 		/// <summary>
 		/// Set the angles with Ox, Oy, Oz for rotation matrix
@@ -68,6 +69,9 @@ namespace obj {
 		/// </summary>
 		virtual void draw();
 
+		void setView(GLint view);
+		GLint getView();
+
 	protected:
 
 		// Screen transformation:
@@ -88,5 +92,7 @@ namespace obj {
 		glm::mat4 _custom_transformation;
 
 		glm::mat4 _getTransformations();
+
+		GLint _view;
 	};
 }

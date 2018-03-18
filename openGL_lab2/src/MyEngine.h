@@ -16,16 +16,21 @@ public:
 	MyEngine();
 	~MyEngine();
 
+	enum Show {
+		CUBE,
+		SPIRAL
+	};
+
 private:
 	GLFWwindow *_activity;
 	int _activityWidth = 1280;
 	int _activityHeight = 768;
 
+	Show _mode;
+
 	GLuint _basicShader;
 	GLuint _staticShader;
 	GLuint _buffer;
-
-	GLint _type = GL_LINE;
 
 	void _initObjects();
 	void _draw();
@@ -40,6 +45,7 @@ private:
 	shared_ptr<obj::Cube> _projCube;
 
 	shared_ptr<obj::Spiral> _spiral;
+	shared_ptr<obj::Spiral> _projSpiral;
 
 	void _mainLoop();
 

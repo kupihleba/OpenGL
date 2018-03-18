@@ -23,6 +23,9 @@ GLuint ShaderFactory::_createShader(string & vertexShader, string & fragmentShad
 	glAttachShader(prog, fs);
 	glLinkProgram(prog);
 
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
 	return prog;
 }
 

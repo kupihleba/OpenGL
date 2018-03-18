@@ -67,19 +67,25 @@ Cube::Cube(GLuint shader):Object()
 	}
 	
 	glGenBuffers(1, &_VBufObj);
-	glGenVertexArrays(1, &_VArrObj);
+	// glGenVertexArrays(1, &_VArrObj);
 
-	glBindVertexArray(_VArrObj);
+	// glBindVertexArray(_VArrObj);
 	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	/*
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	*/
+
 	glBindVertexArray(0);
 }
 
 
-Cube::~Cube() {}
+Cube::~Cube() 
+{
+	glDeleteBuffers(1, &_VBufObj);
+}
 
 
 void obj::Cube::draw() {
@@ -93,12 +99,11 @@ void obj::Cube::draw() {
 	glUniform4f(myColor, 0.0f, 0.0f, 1.0f, 1.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 
-	glBindVertexArray(_VBufObj);
-	glDrawArrays(GL_QUADS, 0, DIM * EDGES * PT_PER_EDGE);
-	glBindVertexArray(0);
-}
+	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);
+	//glBindVertexArray(_VBufObj);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
 
-void obj::Cube::setView(GLint view)
-{
-	_view = view;
+	glDrawArrays(GL_QUADS, 0, DIM * EDGES * PT_PER_EDGE);
+	//glBindVertexArray(0);
 }
