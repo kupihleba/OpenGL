@@ -6,6 +6,8 @@
 
 using namespace obj;
 
+glm::mat4 Object::_screen_transf(1.0f);
+
 Object::Object()
 {
 	setSize(1.0f);
@@ -63,6 +65,21 @@ std::tuple<float, float, float> obj::Object::getPosition()
 	return std::tuple<float, float, float>(_x, _y, _z);
 }
 
+void obj::Object::setScreenDims(int width, int height)
+{
+	if (width < height) {
+		_screen_transf = glm::scale(glm::vec3(1.0f, (float)width / (float)height, 1.0f));
+	}
+	else {
+		_screen_transf = glm::scale(glm::vec3((float)height / (float)width, 1.0f, 1.0f));
+	}
+}
+
+void obj::Object::clsScreenDims()
+{
+	_screen_transf = glm::mat4(1.0f);
+}
+
 void Object::setRotation(float x_angle, float y_angle, float z_angle)
 {
 	_x_angle = x_angle;
@@ -103,5 +120,5 @@ void obj::Object::draw()
 
 glm::mat4 obj::Object::_getTransformations()
 {	
-	return  _rotation * _size * _custom_transformation * _position; // The order is from left to right!
+	return  _rotation * _size * _custom_transformation * _position * _screen_transf; // The order is from left to right!
 }

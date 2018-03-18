@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Spiral.cpp" />
     <ClCompile Include="src\ShaderFactory.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Cube.cpp" />
@@ -142,6 +143,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Spiral.h" />
     <ClInclude Include="src\ShaderFactory.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Cube.h" />

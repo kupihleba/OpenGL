@@ -51,6 +51,11 @@ namespace obj {
 		/// </returns>
 		std::tuple<float, float, float> getPosition();
 
+		/// <summary>
+		/// Set the transformation matrix, so that the absolute coordinates would form a square
+		/// </summary>
+		static void setScreenDims(int width, int height);
+		static void clsScreenDims();
 
 		/// <summary>
 		/// Set custom transformation of object
@@ -64,7 +69,10 @@ namespace obj {
 		virtual void draw();
 
 	protected:
-		
+
+		// Screen transformation:
+		static glm::mat4 _screen_transf;
+
 		// Size:
 		float _size_koefficient;
 		glm::mat4 _size;

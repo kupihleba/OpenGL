@@ -4,7 +4,7 @@
 #include <sstream>
 #include <tuple>
 #include <glm/glm.hpp>
-
+#include <glm/gtc/type_ptr.hpp>
 
 #define use(ns) using ns;
 use(std::cout) use(std::endl)
@@ -26,7 +26,7 @@ MyEngine::MyEngine()
 	glfwSetWindowUserPointer(_activity, this);
 
 	if (glewInit() != GLEW_OK) {
-		cout << "glewInit failed!" << endl;
+		throw std::exception("glewInit failed!");
 	}
 	else {
 		cout << glGetString(GL_VERSION) << endl;
@@ -36,18 +36,8 @@ MyEngine::MyEngine()
 	_basicShader = _shaderFactory.loadShader("res/shaders/basic.shader");
 	_staticShader = _shaderFactory.loadShader("res/shaders/static.shader");
 
-	//glViewport(0, 0, _activityWidth, _activityHeight);
-
-	if (_activityWidth > _activityHeight) {
-		int size =  _activityHeight;
-		int delta = (_activityWidth - _activityHeight) / 2;
-		glViewport(delta, 0, size, size);
-	}
-	else {
-		int size = _activityWidth;
-		int delta = (_activityHeight - _activityWidth) / 2;
-		glViewport(0, delta, size, size);
-	}
+	glViewport(0, 0, _activityWidth, _activityHeight);
+	obj::Object::setScreenDims(_activityWidth, _activityHeight);
 
 	_initObjects();
 	_mainLoop();
@@ -61,46 +51,41 @@ MyEngine::~MyEngine()
 
 void MyEngine::_initObjects()
 {
-	//_cube = shared_ptr<obj::Cube>(new obj::Cube(_basicShader));
 	_cube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	_miniCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	_projCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
-
+	
+	_cube->setXangle(0.5f);
+	_cube->setYangle(0.5f);
 	_cube->setXangle(0.5f);
 	_cube->setXangle(0.5f);
 
 	_miniCube->setXangle(0.5f);
 	_miniCube->setYangle(0.5f);
 	_miniCube->setSize(0.2f);
-	_miniCube->setPosition(0.7f, -0.7f, 0.0f);
+	_miniCube->setPosition(0.9f, -0.7f, 0.0f);
 
 	_projCube->setXangle(0.5f);
 	_projCube->setYangle(0.5f);
 	_projCube->setSize(0.2f);
-	// TODO: Create projection matrix
-	//_projCube->setTransformation(...);
-	_projCube->setPosition(-0.7f, -0.7f, 0.0f);
+
+	float proj[] = {
+		1.0f,   0.0f,  0.0f,  0.0f,
+		0.0f,   1.0f,  0.0f,  0.0f,
+		0.0f,   0.0f,  1.0f,  0.0f,
+	   -0.9f,  -0.9f,  0.9f,  1.0f,
+	};
+	_projCube->setTransformation(glm::make_mat4(proj));
+	_projCube->setPosition(-0.9f, -0.7f, 0.0f);
 }
 
 void MyEngine::_destroyObjects() {}
 
 void MyEngine::_draw()
 {
-	if (_activityWidth > _activityHeight) {
-		int size = _activityHeight;
-		int delta = (_activityWidth - _activityHeight) / 2;
-		glViewport(delta, 0, size, size);
-	}
-	else {
-		int size = _activityWidth;
-		int delta = (_activityHeight - _activityWidth) / 2;
-		glViewport(0, delta, size, size);
-	}
 	_cube->setView(_type);
 	_cube->simpleDraw();
 	_projCube->simpleDraw();
-	//glViewport(0, 0, 100, 100);
-	//_miniCube->setPosition(0.25f, 0.4f, 0.0f);
 	_miniCube->simpleDraw();
 }
 
@@ -147,19 +132,24 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		case GLFW_KEY_LEFT:
 			x_angle = std::get<0>(context->_cube->getRotation());
 			context->_cube->setXangle(x_angle - ROT_STEP);
+			context->_projCube->setXangle(x_angle - ROT_STEP);
 			break;
 		case GLFW_KEY_RIGHT:
 			x_angle = std::get<0>(context->_cube->getRotation());
 			context->_cube->setXangle(x_angle + ROT_STEP);
+			context->_projCube->setXangle(x_angle + ROT_STEP);
 			break;
 
 		case GLFW_KEY_UP:
 			y_angle = std::get<1>(context->_cube->getRotation());
 			context->_cube->setYangle(y_angle - ROT_STEP);
+			context->_projCube->setYangle(y_angle - ROT_STEP);
+
 			break;
 		case GLFW_KEY_DOWN:
 			y_angle = std::get<1>(context->_cube->getRotation());
 			context->_cube->setYangle(y_angle + ROT_STEP);
+			context->_projCube->setYangle(y_angle + ROT_STEP);
 			break;
 
 		case GLFW_KEY_W:

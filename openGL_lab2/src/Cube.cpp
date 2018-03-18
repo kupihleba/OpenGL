@@ -3,13 +3,12 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <tuple>
 
 #define DIM 3	// dimension
 #define PT_PER_EDGE 4
 #define COLOURS 6 * 3
 #define EDGES 6 // number of edges 
-#define PI 3.141592654
+#define PI 3.14159265358979f
 
 using namespace obj;
 
