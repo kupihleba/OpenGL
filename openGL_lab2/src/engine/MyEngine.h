@@ -2,9 +2,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "obj/Cube.h"
-#include "obj/Spiral.h"
-#include "ShaderFactory.h"
+#include <objects/Cube.h>
+#include <objects/Spiral.h>
+#include <ShaderFactory.h>
 #include <memory>
 
 #define use(ns) using ns;
@@ -50,5 +50,6 @@ private:
 	void _mainLoop();
 
 	static void _keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void _window_size_callback(GLFWwindow* window, int width, int height);
 };
 

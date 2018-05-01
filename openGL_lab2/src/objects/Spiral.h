@@ -13,6 +13,7 @@ namespace obj {
 		
 		void draw();
 		void reconstruct(int precision);
+		int getBuildPrecision();
 
 		~Spiral();
 
@@ -21,6 +22,8 @@ namespace obj {
 		
 		std::vector<float> _vertices;
 		GLuint _VBufObj;
+
+		int _precision;
 
 		void _build(int precision, float r, float R, float len);
 

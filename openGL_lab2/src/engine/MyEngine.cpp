@@ -21,6 +21,7 @@ MyEngine::MyEngine()
 		throw -1;
 	}
 	glfwSetKeyCallback(_activity, _keyCallback);
+	glfwSetWindowSizeCallback(_activity, _window_size_callback);
 
 	glfwMakeContextCurrent(_activity);
 	glfwSetWindowUserPointer(_activity, this);
@@ -219,8 +220,37 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 				}
 			}
 			break;
+
+		case GLFW_KEY_1:
+			context->_spiral->reconstruct(10);
+			break;
+
+		case GLFW_KEY_2:
+			context->_spiral->reconstruct(20);
+			break;
+		case GLFW_KEY_3:
+			context->_spiral->reconstruct(30);
+			break;
+		case GLFW_KEY_4:
+			context->_spiral->reconstruct(40);
+			break;
+		case GLFW_KEY_5:
+			context->_spiral->reconstruct(50);
+			break;
+		case GLFW_KEY_6:
+			context->_spiral->reconstruct(60);
+			break;
 		default:
 			break;
 		}
 	}
+}
+
+void MyEngine::_window_size_callback(GLFWwindow* window, int width, int height)
+{
+	MyEngine *context = static_cast<MyEngine*>(glfwGetWindowUserPointer(window));
+	glViewport(0, 0, width, height);
+	obj::Object::setScreenDims(width, height);
+	context->_activityHeight = height;
+	context->_activityWidth = width;
 }

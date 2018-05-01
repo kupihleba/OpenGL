@@ -96,7 +96,7 @@ void obj::Cube::draw() {
 	GLint myColor = glGetUniformLocation(_shader, "myColor");
 
 	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(res));
-	glUniform4f(myColor, 0.0f, 0.0f, 1.0f, 1.0f);
+	glUniform4f(myColor, 0.0f, 0.0f, 1.0f, 0.9f);
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);

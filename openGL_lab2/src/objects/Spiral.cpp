@@ -18,7 +18,9 @@ Spiral::Spiral(GLuint shader)
 {
 	_shader = shader;
 
-	_build(50, 0.4f, 1.0f, 2.0f);
+	_precision = 50;
+	_build(_precision, 0.4f, 1.0f, 2.0f);
+
 	//std::cout << "0: " << (*((float*)&(_vertices.data()[0]))) << '\t' << _vertices[0] << std::endl
 	//	<< "size " << _vertices.size() * sizeof(float) << std::endl;
 
@@ -41,7 +43,7 @@ void obj::Spiral::draw()
 	GLint myColor = glGetUniformLocation(_shader, "myColor");
 
 	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(res));
-	glUniform4f(myColor, 1.0f, 0.3f, 0.3f, 1.0f);
+	glUniform4f(myColor, 1.0f, 0.3f, 0.3f, 0.9f);
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 	
 
@@ -112,7 +114,8 @@ void obj::Spiral::_build(int precision, float r, float R, float len)
 			_vertices.push_back(get<2>(coords));
 		}
 	}
-	for (u = 0; u <= 2 * PI + delta; u += delta) {
+	for (u = 0; u <= 2 * PI + delta; u += delta) { 
+		// TODO: Wrong vertices inserted!
 		coords = _f(u, v);
 		_vertices.push_back(get<0>(coords));
 		_vertices.push_back(get<1>(coords));
@@ -120,7 +123,21 @@ void obj::Spiral::_build(int precision, float r, float R, float len)
 	}
 }
 
-void obj::Spiral::reconstruct(int precision)
+/// ATTENTION! RACE CONDITIONS HERE!
+void obj::Spiral::reconstruct(int precision) 
 {
+	_precision = precision;
+	// TODO: BLOCK EVERYTHING DURING REBUILD!
+	// MEMORY LEAKS POSSIBLE
+	_build(precision, 0.4f, 1.0f, 2.0f);
+	glDeleteBuffers(1, &_VBufObj);
+	glGenBuffers(1, &_VBufObj);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);
+	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
+	glBindVertexArray(0);
+}
 
+int obj::Spiral::getBuildPrecision()
+{
+	return _precision;
 }
