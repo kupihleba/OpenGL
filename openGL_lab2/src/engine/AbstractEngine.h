@@ -31,7 +31,6 @@ protected:
 	//virtual void _mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	//std::function<void(GLFWwindow* window, int button, int action, int mods)> _mouseButtonCallback = nullptr;
 
-	virtual void _draw() {};
 
 private:
 	static void _staticWindowSizeCallback(GLFWwindow* window, int width, int height);
@@ -41,11 +40,14 @@ private:
 	static void _staticMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	std::function <void(GLFWwindow* window, int button, int action, int mods)> _mouseButtonCallback;
 
-	void _mainLoop();
 
 protected:
-	void _setSizeCallback(decltype(_windowSizeCallback) callback);
+	void _setWindowSizeCallback(decltype(_windowSizeCallback) callback);
 	void _setKeyCallback(decltype(_keyCallback) callback);
 	void _setMouseButtonCallback(decltype(_mouseButtonCallback) callback);
+
+	std::function <void(GLFWwindow* window, int key, int scancode, int action, int mods)> _getKeyCallback();
+	virtual void _run();
+	virtual void _draw() {};
 };
 

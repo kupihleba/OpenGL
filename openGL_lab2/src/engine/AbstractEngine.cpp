@@ -35,16 +35,18 @@ AbstractEngine::AbstractEngine()
 	else {
 		debug(glGetString(GL_VERSION));
 	}
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // TODO: move
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f); // TODO: move
 	
 	glViewport(0, 0, _activity.width, _activity.height);
+	glOrtho(0.0f, _activity.width, 0.0f, _activity.height, 0.0f, 1.0f);
 
-	_mainLoop();
+	//_mainLoop();
 }
 
 
 AbstractEngine::~AbstractEngine()
 {
+	glfwDestroyWindow(_activity.ref);
 	glfwTerminate();
 }
 
@@ -67,17 +69,22 @@ void AbstractEngine::_staticMouseButtonCallback(GLFWwindow * window, int button,
 	context->_mouseButtonCallback(window, button, action, mods);
 }
 
-void AbstractEngine::_mainLoop()
+std::function <void(GLFWwindow* window, int key, int scancode, int action, int mods)> AbstractEngine::_getKeyCallback()
+{
+	return _keyCallback;
+}
+
+void AbstractEngine::_run()
 {
 	while (!glfwWindowShouldClose(_activity.ref))
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT);
 		_draw();
-		glfwSwapBuffers(_activity.ref);
+		//glfwSwapBuffers(_activity.ref);
 		glfwPollEvents();
 	}
 }
-void AbstractEngine::_setSizeCallback(decltype(_windowSizeCallback) callback)
+void AbstractEngine::_setWindowSizeCallback(decltype(_windowSizeCallback) callback)
 {
 	_windowSizeCallback = callback;
 }
@@ -88,6 +95,8 @@ void AbstractEngine::_setKeyCallback(decltype(_keyCallback) callback)
 
 void AbstractEngine::_setMouseButtonCallback(decltype(_mouseButtonCallback) callback)
 {
+	std::cout << "OK" << std::endl;
+
 	_mouseButtonCallback = callback;
 }
 
