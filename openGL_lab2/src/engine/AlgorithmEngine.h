@@ -1,11 +1,10 @@
 #pragma once
-#include <engine/AbstractEngine.h>
+#include <engine\AbstractEngine.h>
 #include <vector>
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <kupihleba.h>
-
+#include <utils\kupihleba.h>
 
 class AlgorithmEngine : public AbstractEngine
 {
@@ -26,7 +25,7 @@ private:
 	struct Line {
 		Point beg;
 		Point end;
-		Point center();
+		Point center() const;
 		string toString() const;
 	};
 
@@ -37,12 +36,14 @@ private:
 	};
 
 	vector<Point> _vertices;
+	vector<Line> _edges;
+
 	const size_t floatsInVertex = 3;
 
 	vector<RGB> _buffer;
 	//vector<RGB> _tmpBuffer;
 
-	virtual void _draw();
+	 virtual void _draw();
 
 	int _checkSide(const Line & line, const Point & p) const;
 	Point _intersection(const Line & a, const Line & b) const;
@@ -71,20 +72,14 @@ private:
 
 	void drawPoly(const vector<Point> & poly, RGB color, GLfloat lineWidth) const;
 	void drawLine(const Line & line, RGB color, GLfloat lineWidth) const;
+	vector<Line> castToLineLoop(const vector<Point> & points) const;
 
 	vector<AlgorithmEngine::Line> goSutherlandHodgeman();
-	vector<AlgorithmEngine::Point> _clip(const vector<Point> & vertices, const Line & line) const;
-	int isInside(Point p);
+	vector<AlgorithmEngine::Line> goSutherlandHodgeman(const vector<Line> & poly, const vector<Line> & clip);
+	vector<AlgorithmEngine::Line> _clip(const vector<Line> & vertices, const Line & line);
+	bool isInside(const vector<Point> & clipArea, const Point & p) const;
 
-	bool isClockwise() const
-	{
-		auto& r = _cropArea;
-		long sum = 0;
-		for (int i = 1; i <= r.size(); i++) {
-			sum += r[i % r.size()].x *
-				(r[(i + 1) % r.size()].y - r[(i - 1) % r.size()].y);
-		}
-		return sum < 0;
-	}
+	SILENT void _proccessCase(vector<Line> & toAddEdges, const Line & poly, const Line & clip, vector<Point> & intersectionPoints = vector<Point>());
+	bool isClockwise() const;
 };
 

@@ -1,4 +1,5 @@
 #include "AlgorithmEngine.h"
+#include <algorithm>
 
 int AlgorithmEngine::Point::width = 0;
 int AlgorithmEngine::Point::floatsInVertex = 0;
@@ -249,6 +250,22 @@ void AlgorithmEngine::drawLine(const Line & line, RGB color, GLfloat lineWidth) 
 	glEnd();
 }
 
+vector<AlgorithmEngine::Line> AlgorithmEngine::castToLineLoop(const vector<Point>& points) const
+{
+	vector<Line> result;
+	if (points.size() < 2) {
+		return result;
+	}
+	result.reserve(points.size() + 1);
+	auto iter = points.begin();
+	while (iter + 1 != points.end()) {
+		result.push_back(Line{ *iter, *(iter + 1) });
+		iter++;
+	}
+
+	return result;
+}
+
 void AlgorithmEngine::drawLineDESTRUCTIVE(const Point & pointA, const Point & pointB)
 {
 	_drawLineDESTRUCTIVE(_buffer, pointA, pointB);
@@ -257,19 +274,27 @@ void AlgorithmEngine::drawLineDESTRUCTIVE(const Point & pointA, const Point & po
 vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman()
 {
 	vector<Point> poly(_vertices);
-	
+	vector<Line> edges(_edges);
+
+	auto iter = _vertices.begin();
+	while (iter + 1 != _vertices.end()) {
+		edges.push_back(Line{ *iter, *(iter + 1) });
+		iter++;
+	}
+	edges.push_back(Line{ _vertices.front(), _vertices.back() });
+
 	for (int i = 0; i < _cropArea.size(); i++) {
 		int k = (i + 1) % _cropArea.size();
-		poly = _clip(poly, Line {
+		edges = _clip(edges, Line {
 			_cropArea[i],
 			_cropArea[k]
 		});
 	}
+	/*
 	for (auto &i : poly) {
-		_lines.push_back(LineRGB(Line{ i, Point{ i.x + 10, i.y + 10 } }, RGB{ 1.0f, 1.0f, 0 }));
-	}
-
-
+		_lines.push_back(LineRGB(Line{ i, Point{ i.x + 10, i.y + 10 } }, RGB{ 1.0f, 1.0f, 0.0f }));
+	}*/
+#if 0
 	vector<Line> results;
 	
 	vector<Line> skin; // skin contains all the vertices
@@ -320,65 +345,113 @@ vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman()
 		}
 		results.push_back(tmp);
 	}
-	return results;
+#endif
+	return edges;
 }
 
-vector<AlgorithmEngine::Point> AlgorithmEngine::_clip(const vector<Point> & vertices, const Line & line) const
+vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman(const vector<Line> & poly, const vector<Line> & clip)
 {
-	vector <Point> newPoints;
-	for (int i = 0; i < vertices.size(); i++)
-	{
-		// i and k form a line in polygon
-		int k = (i + 1) % vertices.size();
-
-		Point polyI = vertices[i];
-		Point polyK = vertices[k];
-
-		// Calculating position of first point
-		auto iPos = (line.end.x - line.beg.x) * (polyI.y - line.beg.y) - (line.end.y - line.beg.y) * (polyI.x - line.beg.x);
-
-		// Calculating position of second point
-		auto kPos = (line.end.x - line.beg.x) * (polyK.y - line.beg.y) - (line.end.y - line.beg.y) * (polyK.x - line.beg.x);
-
-		if (iPos < 0 && kPos < 0) // Both points are inside
-		{
-			// Only second point is added
-			newPoints.push_back(polyK);
-		} else if (iPos >= 0 && kPos < 0) { // First point is outside
-			// Point of intersection with edge
-			// and the second point is added
-			newPoints.push_back(_intersection(
-				line,
-				Line {
-				polyI,
-				polyK
-			}));
-
-			newPoints.push_back(polyK);
-		} else if (iPos < 0 && kPos >= 0) { // Second point is outside
-			newPoints.push_back(_intersection(
-				line,
-				Line {
-				polyI,
-				polyK
-			}));
-			
-		}
-
-		// Both points are outside
-		else
-		{
-			// Nothing to be added
-		}
+	vector<Line> edges(poly);
+	for (const Line & c : clip) {
+		edges = _clip(edges, c);
 	}
-
-	return newPoints;
+	return edges;
 }
 
-int AlgorithmEngine::isInside(Point p)
+vector<AlgorithmEngine::Line> AlgorithmEngine::_clip(const vector<Line> & edges, const Line & clip)
 {
-	return 0;
+	vector <Point> intersectionPoints;
+	vector <Line> newEdges;
+
+	for (const Line & poly: edges) {
+		_proccessCase(newEdges, poly, clip, intersectionPoints);
+	}
+	std::sort(intersectionPoints.begin(), intersectionPoints.end(), [](const Point & a, const Point & b) -> bool {
+		if (a.x > b.x) {
+			return true;
+		} else {
+			return false;
+		}
+		return a.y > b.y;
+	});
+	vector<Line> cropEdges(castToLineLoop(intersectionPoints));
+		for (auto & edge : cropEdges) {
+			if (isInside(_vertices, edge.center())) {
+				cout << "OK" << endl;
+				newEdges.push_back(edge);
+			}
+		}
+
+	return newEdges;
 }
+
+bool AlgorithmEngine::isInside(const vector<Point> & clipArea, const Point & p) const
+{
+		auto& area = clipArea;
+		bool c = false;
+		auto x = p.x, 
+			y = p.y;
+		for (int i = 0, j = area.size() - 1; i < area.size(); j = i++)
+			if ((((area[i].y <= y) && (y < area[j].y)) || ((area[j].y <= y) && (y < area[i].y))) && // :)
+				(x >(area[j].x - area[i].x) * (y - area[i].y) / (area[j].y - area[i].y) + area[i].x))
+				c = !c;
+		return c;
+}
+
+SILENT void AlgorithmEngine::_proccessCase(vector<Line> & toAddEdges, const Line & poly, const Line & clip, vector<Point> & intersectionPoints)
+{
+
+	// Calculating position of first point
+	auto begPos = (clip.end.x - clip.beg.x) * (poly.beg.y - clip.beg.y) - (clip.end.y - clip.beg.y) * (poly.beg.x - clip.beg.x);
+
+	// Calculating position of second point
+	auto endPos = (clip.end.x - clip.beg.x) * (poly.end.y - clip.beg.y) - (clip.end.y - clip.beg.y) * (poly.end.x - clip.beg.x);
+
+	if (begPos < 0 && endPos < 0) { // Both points are inside:
+		toAddEdges.push_back(poly);
+		cout << "inside" << endl;
+		// Only second point is added
+		//newPoints.push_back(polyK);
+	} else if (begPos >= 0 && endPos < 0) { // Beg point is outside:
+										  // Point of intersection with edge
+										  // and the second point is added
+		cout << "intersection 1" << endl;
+		Point x(_intersection(clip, poly));
+		intersectionPoints.push_back(x);
+		toAddEdges.push_back(
+			Line{
+			x,
+			poly.end
+		});
+	}
+	else if (begPos < 0 && endPos >= 0) { // End point is outside
+		cout << "intersection 2" << endl;
+		Point x(_intersection(clip, poly));
+		intersectionPoints.push_back(x);
+		toAddEdges.push_back(
+			Line{
+			poly.beg,
+			x
+		});
+	}
+	else {
+		// Both points are outside
+		cout << "Outside" << endl;
+		// Nothing to be added
+	}
+}
+
+bool AlgorithmEngine::isClockwise() const
+{	
+	auto & r = _cropArea;
+	long sum = 0;
+	for (int i = 1; i <= r.size(); i++) {
+		sum += r[i % r.size()].x *
+			(r[(i + 1) % r.size()].y - r[(i - 1) % r.size()].y);
+	}
+	return sum < 0;
+}
+
 
 int AlgorithmEngine::Point::calcOffset() const
 {
@@ -392,7 +465,7 @@ string AlgorithmEngine::Point::toString() const
 		return ss.str();
 }
 
-AlgorithmEngine::Point AlgorithmEngine::Line::center()
+AlgorithmEngine::Point AlgorithmEngine::Line::center() const
 {
 	return Point {
 		(beg.x + end.x) / 2,
