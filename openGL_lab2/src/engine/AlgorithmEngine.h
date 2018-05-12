@@ -1,6 +1,11 @@
 #pragma once
 #include <engine/AbstractEngine.h>
 #include <vector>
+#include <sstream>
+#include <string>
+#include <iostream>
+#include <kupihleba.h>
+
 
 class AlgorithmEngine : public AbstractEngine
 {
@@ -14,12 +19,15 @@ private:
 		GLint x;
 		GLint y;
 		int calcOffset() const;
+		string toString() const;
 		static int width;
 		static int floatsInVertex;
 	};
 	struct Line {
 		Point beg;
 		Point end;
+		Point center();
+		string toString() const;
 	};
 
 	struct RGB {
@@ -52,16 +60,31 @@ private:
 	vector<Point> _unhandledClicks;
 
 	typedef std::pair<vector<Point>, RGB> PolyRGB;
-	vector<std::pair<vector<Point>, RGB>> _polygons;
+	typedef std::pair<Line, RGB> LineRGB;
+	vector<PolyRGB> _polygons;
+	vector<LineRGB> _lines;
 
-	void _drawLine(vector<RGB> & buffer, const Point & a, const Point & b);
-	void _colorPoint(vector<RGB> & buffer, const Point & p, const RGB & color);
-	void drawLine(const Point & a, const Point & b);
-	void colorPoint(const Point & p, const RGB & color);
+	void _drawLineDESTRUCTIVE(vector<RGB> & buffer, const Point & a, const Point & b);
+	void _colorPointDESTRUCTIVE(vector<RGB> & buffer, const Point & p, const RGB & color);
+	void drawLineDESTRUCTIVE(const Point & a, const Point & b);
+	void colorPointDESTRUCTIVE(const Point & p, const RGB & color);
 
 	void drawPoly(const vector<Point> & poly, RGB color, GLfloat lineWidth) const;
+	void drawLine(const Line & line, RGB color, GLfloat lineWidth) const;
 
-	vector<AlgorithmEngine::Point> goSutherlandHodgeman() const;
+	vector<AlgorithmEngine::Line> goSutherlandHodgeman();
 	vector<AlgorithmEngine::Point> _clip(const vector<Point> & vertices, const Line & line) const;
+	int isInside(Point p);
+
+	bool isClockwise() const
+	{
+		auto& r = _cropArea;
+		long sum = 0;
+		for (int i = 1; i <= r.size(); i++) {
+			sum += r[i % r.size()].x *
+				(r[(i + 1) % r.size()].y - r[(i - 1) % r.size()].y);
+		}
+		return sum < 0;
+	}
 };
 

@@ -1,7 +1,5 @@
 #include "AlgorithmEngine.h"
 
-#include <iostream>
-
 int AlgorithmEngine::Point::width = 0;
 int AlgorithmEngine::Point::floatsInVertex = 0;
 
@@ -27,7 +25,21 @@ AlgorithmEngine::AlgorithmEngine()
 				}
 				break;
 			case GLFW_KEY_ENTER:
-				_polygons.push_back(PolyRGB(goSutherlandHodgeman(), RGB{ 1.0f, 0.0f, 0.0f }));
+				if (isClockwise()) {
+					//goSutherlandHodgeman();
+					vector<Line> lines(goSutherlandHodgeman());
+					for (Line & l : lines) {
+						_lines.push_back(LineRGB(l, RGB{ 1.0f, 0.0f, 0.0f }));
+					}
+				}
+				else {
+					std::reverse(_cropArea.begin(), _cropArea.end());
+					//goSutherlandHodgeman();
+					vector<Line> lines(goSutherlandHodgeman());
+					for (Line & l : lines) {
+						_lines.push_back(LineRGB(l, RGB{ 1.0f, 0.0f, 0.0f }));
+					}
+				}
 				break;
 			default:
 				break;
@@ -42,6 +54,7 @@ AlgorithmEngine::AlgorithmEngine()
 				static_cast<int>(x),
 				static_cast<int>(_activity.height - y)
 			};
+			cout << p.toString() << endl;
 			switch (_currentHandler) {
 			case POLY_DRAW:
 				_vertices.push_back(p);
@@ -60,7 +73,7 @@ AlgorithmEngine::AlgorithmEngine()
 	
 	_buffer.resize(_activity.width * _activity.height * floatsInVertex);
 	//_tmpBuffer.resize(_activity.width * _activity.height * floatsInVertex);
-	std::fill_n(_buffer.data(), _activity.height * _activity.width * floatsInVertex, RGB{ 0.9f, 0.9f, 0.9f });
+	std::fill_n(_buffer.data(), _activity.height * _activity.width * floatsInVertex, RGB { 0.9f, 0.9f, 0.9f });
 	//std::fill_n(_tmpBuffer.data(), _activity.height * _activity.width * floatsInVertex, RGB{ 1.0f, 1.0f, 1.0f });
 
 	_run();
@@ -80,12 +93,15 @@ void AlgorithmEngine::_draw()
 	for (PolyRGB & i : _polygons) {
 		drawPoly(i.first, i.second, 2.0f);
 	}
+	for (LineRGB & i : _lines) {
+		drawLine(i.first, i.second, 2.0f);
+	}
 	glfwSwapBuffers(_activity.ref);
 }
 
-void AlgorithmEngine::colorPoint(const Point & p, const RGB & color)
+void AlgorithmEngine::colorPointDESTRUCTIVE(const Point & p, const RGB & color)
 {
-	_colorPoint(_buffer, p, color);
+	_colorPointDESTRUCTIVE(_buffer, p, color);
 }
 
 int AlgorithmEngine::_checkSide(const Line & line, const Point & p) const
@@ -125,7 +141,7 @@ void AlgorithmEngine::_drawCropArea()
 	auto iter = _cropArea.begin();
 	Point &start = *iter;
 	if (iter == _cropArea.end()) {
-		colorPoint(start, RGB { 0.0f, 0.0f, 0.0f });
+		colorPointDESTRUCTIVE(start, RGB { 0.0f, 0.0f, 0.0f });
 		return;
 	}
 	glColor3f(0.0, 0.0, 1.0);
@@ -162,7 +178,7 @@ void AlgorithmEngine::_drawPolyArea()
 	}
 }
 
-void AlgorithmEngine::_drawLine(vector<RGB>& buffer, const Point & pointA, const Point & pointB)
+void AlgorithmEngine::_drawLineDESTRUCTIVE(vector<RGB>& buffer, const Point & pointA, const Point & pointB)
 {
 	bool flag = false;
 
@@ -183,7 +199,7 @@ void AlgorithmEngine::_drawLine(vector<RGB>& buffer, const Point & pointA, const
 
 	for (int i = 0; i < dx; i++)
 	{
-		_colorPoint(buffer, activePoint, RGB{ 0, 0, 0 });
+		_colorPointDESTRUCTIVE(buffer, activePoint, RGB{ 0, 0, 0 });
 
 		if (k >= 0) {
 			if (flag) {
@@ -193,7 +209,7 @@ void AlgorithmEngine::_drawLine(vector<RGB>& buffer, const Point & pointA, const
 				activePoint.y += stepY;
 			}
 			k -= 2 * dx;
-			_colorPoint(buffer, activePoint, RGB{ 0, 0, 0 });
+			_colorPointDESTRUCTIVE(buffer, activePoint, RGB{ 0, 0, 0 });
 		}
 
 		if (flag) {
@@ -207,7 +223,7 @@ void AlgorithmEngine::_drawLine(vector<RGB>& buffer, const Point & pointA, const
 	}
 }
 
-void AlgorithmEngine::_colorPoint(vector<RGB>& buffer, const Point & p, const RGB & color)
+void AlgorithmEngine::_colorPointDESTRUCTIVE(vector<RGB>& buffer, const Point & p, const RGB & color)
 {
 	buffer[p.calcOffset()] = color;
 }
@@ -223,24 +239,88 @@ void AlgorithmEngine::drawPoly(const vector<Point> & poly, RGB color, GLfloat li
 	glEnd();
 }
 
-void AlgorithmEngine::drawLine(const Point & pointA, const Point & pointB)
+void AlgorithmEngine::drawLine(const Line & line, RGB color, GLfloat lineWidth) const
 {
-	_drawLine(_buffer, pointA, pointB);
+	glColor3f(color.r, color.g, color.b);
+	glLineWidth(lineWidth);
+	glBegin(GL_LINES);
+	glVertex2i(line.beg.x, line.beg.y);
+	glVertex2i(line.end.x, line.end.y);
+	glEnd();
 }
 
-vector<AlgorithmEngine::Point> AlgorithmEngine::goSutherlandHodgeman() const
+void AlgorithmEngine::drawLineDESTRUCTIVE(const Point & pointA, const Point & pointB)
 {
-	vector<Point> polys(_vertices);
+	_drawLineDESTRUCTIVE(_buffer, pointA, pointB);
+}
 
+vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman()
+{
+	vector<Point> poly(_vertices);
+	
 	for (int i = 0; i < _cropArea.size(); i++) {
 		int k = (i + 1) % _cropArea.size();
-		polys = _clip(polys, Line {
+		poly = _clip(poly, Line {
 			_cropArea[i],
 			_cropArea[k]
 		});
 	}
+	for (auto &i : poly) {
+		_lines.push_back(LineRGB(Line{ i, Point{ i.x + 10, i.y + 10 } }, RGB{ 1.0f, 1.0f, 0 }));
+	}
 
-	return polys;
+
+	vector<Line> results;
+	
+	vector<Line> skin; // skin contains all the vertices
+	auto iterV(_vertices.begin());
+	while (iterV + 1 != _vertices.end()) {
+		skin.push_back(Line {
+			*iterV,
+			*(iterV + 1)
+		});
+		iterV++;
+	}
+	skin.push_back(Line { *iterV, *_vertices.begin() });
+	
+	auto iterPoly = poly.begin();
+	while (iterPoly + 1 != poly.end()) {
+		Line tmp = Line {
+			*iterPoly,
+			*(iterPoly + 1)
+		};
+		Point onLine = tmp.center();
+		cout << onLine.toString() << endl;
+		/*if (prt(isInside(onLine)) > 0) {
+			results.push_back(tmp);
+		}*/
+		
+		for (Line & l : skin) {
+			if (prt(_checkSide(l, onLine)) > 0) {
+				cout << "break " << onLine.toString() << endl;
+				break;
+			}
+			results.push_back(tmp);
+		}
+		iterPoly++;
+	}
+
+	Line tmp = Line {
+		*poly.begin(),
+		*(iterPoly)
+	};
+	Point onLine = tmp.center();
+	/*if (prt(isInside(onLine)) > 0) {
+		results.push_back(tmp);
+	}*/
+	for (Line & l : skin) {
+		if (prt(_checkSide(l, onLine)) > 0) {
+			cout << "break " << onLine.toString() << endl;
+			break;
+		}
+		results.push_back(tmp);
+	}
+	return results;
 }
 
 vector<AlgorithmEngine::Point> AlgorithmEngine::_clip(const vector<Point> & vertices, const Line & line) const
@@ -265,24 +345,24 @@ vector<AlgorithmEngine::Point> AlgorithmEngine::_clip(const vector<Point> & vert
 			// Only second point is added
 			newPoints.push_back(polyK);
 		} else if (iPos >= 0 && kPos < 0) { // First point is outside
-			 
 			// Point of intersection with edge
 			// and the second point is added
-			newPoints.push_back(_intersection(line,
-				Line{
-				polyI,
-				polyK
-			}));
-
-			newPoints.push_back(polyK);
-		} else if (iPos < 0 && kPos >= 0) // Second point is outside
-		{
 			newPoints.push_back(_intersection(
 				line,
 				Line {
 				polyI,
 				polyK
 			}));
+
+			newPoints.push_back(polyK);
+		} else if (iPos < 0 && kPos >= 0) { // Second point is outside
+			newPoints.push_back(_intersection(
+				line,
+				Line {
+				polyI,
+				polyK
+			}));
+			
 		}
 
 		// Both points are outside
@@ -295,7 +375,34 @@ vector<AlgorithmEngine::Point> AlgorithmEngine::_clip(const vector<Point> & vert
 	return newPoints;
 }
 
+int AlgorithmEngine::isInside(Point p)
+{
+	return 0;
+}
+
 int AlgorithmEngine::Point::calcOffset() const
 {
 	return x + y * width;
+}
+
+string AlgorithmEngine::Point::toString() const
+{
+		std::stringstream ss;
+		ss << '(' << x << "; " << y << ')';
+		return ss.str();
+}
+
+AlgorithmEngine::Point AlgorithmEngine::Line::center()
+{
+	return Point {
+		(beg.x + end.x) / 2,
+		(beg.y + end.y) / 2
+	};
+}
+
+string AlgorithmEngine::Line::toString() const
+{
+	std::stringstream ss;
+	ss << beg.toString() << " -> " << end.toString();
+	return ss.str();
 }
