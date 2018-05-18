@@ -1,6 +1,7 @@
 #pragma once
 #include <engine/AbstractEngine.h>
 #include <vector>
+#include <utils/Structures.h>
 
 #define use(ns) using ns;
 use(std::vector)
@@ -13,9 +14,12 @@ public:
 	PostfiltrationEngine();
 	~PostfiltrationEngine();
 private:
+	
+	const size_t floatsInVertex = 3;
+
 	struct Edge {
 		int x0, y0, x1, y1;
-		int x_cross; //x-координата пересечения строк
+		int x_cross;
 		double tg;
 		Edge(int x0, int y0, int x1, int y1) : x0(x0), y0(y0), x1(x1), y1(y1) {}
 
@@ -58,5 +62,12 @@ private:
 	void draw_edges();
 	void draw_without_filling();
 	void add_vertex(int x, int y);
+
+	void _drawLineDESTRUCTIVE(vector<RGB> & buffer, const Point & a, const Point & b);
+	void _colorPointDESTRUCTIVE(vector<RGB> & buffer, const Point & p, const RGB & color);
+	void drawLineDESTRUCTIVE(const Point & a, const Point & b);
+	void colorPointDESTRUCTIVE(const Point & p, const RGB & color);
+	vector<RGB> _buffer;
+
 };
 

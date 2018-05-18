@@ -5,44 +5,21 @@
 #include <tuple>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#define use(ns) using ns;
-use(std::cout) use(std::endl)
+#include <utils/kupihleba.h>
 
 MyEngine::MyEngine()
 {
-	if (!glfwInit())
-		throw -1;
-
-	_activity = glfwCreateWindow(_activityWidth, _activityHeight, "Kupihleba project", NULL, NULL);
-	if (!_activity)
-	{
-		glfwTerminate();
-		throw -1;
-	}
-	glfwSetKeyCallback(_activity, _keyCallback);
-	glfwSetWindowSizeCallback(_activity, _window_size_callback);
-
-	glfwMakeContextCurrent(_activity);
-	glfwSetWindowUserPointer(_activity, this);
-
-	if (glewInit() != GLEW_OK) {
-		throw std::exception("glewInit failed!");
-	}
-	else {
-		cout << glGetString(GL_VERSION) << endl;
-	}
+	_setKeyCallback(_keyCallback);
+	_setWindowSizeCallback(_window_size_callback);
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	_basicShader = _shaderFactory.loadShader("res/shaders/basic.shader");
 	_staticShader = _shaderFactory.loadShader("res/shaders/static.shader");
 
-	glViewport(0, 0, _activityWidth, _activityHeight);
-	obj::Object::setScreenDims(_activityWidth, _activityHeight);
+	obj::Object::setScreenDims(_activity.width, _activity.height);
 
 	_initObjects();
-	_mainLoop();
-	_destroyObjects();
+	_run();
 }
 
 MyEngine::~MyEngine()
@@ -92,11 +69,10 @@ void MyEngine::_initObjects()
 		.setTransformation(glm::make_mat4(proj));
 }
 
-void MyEngine::_destroyObjects() {}
-
 
 void MyEngine::_draw()
 {
+		glClear(GL_COLOR_BUFFER_BIT);
 		switch (_mode)
 		{
 		case CUBE:
@@ -114,15 +90,16 @@ void MyEngine::_draw()
 		default:
 			break;
 		}	
+		glfwSwapBuffers(_activity.ref);
 }
 
 void MyEngine::_mainLoop()
 {
-	while (!glfwWindowShouldClose(_activity))
+	while (!glfwWindowShouldClose(_activity.ref))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 		_draw();
-		glfwSwapBuffers(_activity);
+		glfwSwapBuffers(_activity.ref);
 		glfwPollEvents();
 	}
 }
@@ -251,6 +228,6 @@ void MyEngine::_window_size_callback(GLFWwindow* window, int width, int height)
 	MyEngine *context = static_cast<MyEngine*>(glfwGetWindowUserPointer(window));
 	glViewport(0, 0, width, height);
 	obj::Object::setScreenDims(width, height);
-	context->_activityHeight = height;
-	context->_activityWidth = width;
+	context->_activity.height = height;
+	context->_activity.width = width;
 }

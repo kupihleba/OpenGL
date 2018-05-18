@@ -2,9 +2,7 @@
 #include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
-#define use(ns) using ns;
-use(std::string)
+#include <utils/kupihleba.h>
 
 class ShaderFactory
 {
@@ -18,7 +16,7 @@ public:
 	/// <returns>
 	/// Shader id
 	/// </returns>
-	GLuint loadShader(const string & filepath);
+	GLuint loadShader(string && filepath);
 
 	/// <summary>
 	/// Loads the basic shader

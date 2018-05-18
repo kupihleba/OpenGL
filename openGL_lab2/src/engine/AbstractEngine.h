@@ -3,14 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <functional>
-//#include <obj/Object.h>
-#define DEBUG
-#ifdef DEBUG
-#include <iostream>
-#define debug(a) std::cout << a << std::endl
-#else
-#define debug(a) ;
-#endif
+#include <utils/kupihleba.h>
 
 using std::vector;
 

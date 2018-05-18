@@ -1,12 +1,10 @@
 #include "AlgorithmEngine.h"
 #include <algorithm>
+#include <utils/Algorithm.h>
 
-int AlgorithmEngine::Point::width = 0;
-int AlgorithmEngine::Point::floatsInVertex = 0;
+int Point::width = 0;
+int Point::floatsInVertex = 0;
 
-template <typename T> int sign(T val) {
-	return (T(0) < val) - (val < T(0));
-}
 
 AlgorithmEngine::AlgorithmEngine()
 {
@@ -26,6 +24,9 @@ AlgorithmEngine::AlgorithmEngine()
 				}
 				break;
 			case GLFW_KEY_ENTER:
+				/*if (!isClockwise(_vertices)) {
+					std::reverse(_vertices.begin(), _vertices.end());
+				}*/
 				if (isClockwise()) {
 					//goSutherlandHodgeman();
 					vector<Line> lines(goSutherlandHodgeman());
@@ -69,12 +70,9 @@ AlgorithmEngine::AlgorithmEngine()
 		}
 	});
 
-	AlgorithmEngine::Point::width = _activity.width;
-	AlgorithmEngine::Point::floatsInVertex = floatsInVertex;
-	
-	_buffer.resize(_activity.width * _activity.height * floatsInVertex);
+	//_buffer.resize(_activity.width * _activity.height * floatsInVertex);
 	//_tmpBuffer.resize(_activity.width * _activity.height * floatsInVertex);
-	std::fill_n(_buffer.data(), _activity.height * _activity.width * floatsInVertex, RGB { 0.9f, 0.9f, 0.9f });
+	//std::fill_n(_buffer.data(), _activity.height * _activity.width * floatsInVertex, RGB { 0.9f, 0.9f, 0.9f });
 	//std::fill_n(_tmpBuffer.data(), _activity.height * _activity.width * floatsInVertex, RGB{ 1.0f, 1.0f, 1.0f });
 
 	_run();
@@ -100,18 +98,15 @@ void AlgorithmEngine::_draw()
 	glfwSwapBuffers(_activity.ref);
 }
 
-void AlgorithmEngine::colorPointDESTRUCTIVE(const Point & p, const RGB & color)
-{
-	_colorPointDESTRUCTIVE(_buffer, p, color);
-}
+
 
 int AlgorithmEngine::_checkSide(const Line & line, const Point & p) const
 {
-	return sign((line.end.x - line.beg.x) * (p.y - line.beg.y) -
+	return algorithm::sign((line.end.x - line.beg.x) * (p.y - line.beg.y) -
 		(line.end.y - line.beg.y) * (p.x - line.beg.x));
 }
 
-AlgorithmEngine::Point AlgorithmEngine::_intersection(const Line & a, const Line & b) const
+Point AlgorithmEngine::_intersection(const Line & a, const Line & b) const
 {
 https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/
 	
@@ -134,6 +129,7 @@ https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-plea
 	};
 }
 
+#if 1
 void AlgorithmEngine::_drawCropArea()
 {
 	if (_cropArea.empty()) {
@@ -142,7 +138,7 @@ void AlgorithmEngine::_drawCropArea()
 	auto iter = _cropArea.begin();
 	Point &start = *iter;
 	if (iter == _cropArea.end()) {
-		colorPointDESTRUCTIVE(start, RGB { 0.0f, 0.0f, 0.0f });
+		//colorPointDESTRUCTIVE(start, RGB { 0.0f, 0.0f, 0.0f });
 		return;
 	}
 	glColor3f(0.0, 0.0, 1.0);
@@ -159,6 +155,7 @@ void AlgorithmEngine::_drawCropArea()
 
 	//drawLine(*iter, start);
 }
+#endif
 
 void AlgorithmEngine::_drawPolyArea()
 {
@@ -177,56 +174,6 @@ void AlgorithmEngine::_drawPolyArea()
 		}
 		glEnd();
 	}
-}
-
-void AlgorithmEngine::_drawLineDESTRUCTIVE(vector<RGB>& buffer, const Point & pointA, const Point & pointB)
-{
-	bool flag = false;
-
-	Point activePoint(pointA);
-
-	int dx = abs(pointB.x - pointA.x),
-		dy = abs(pointB.y - pointA.y);
-
-	int stepX = sign(pointB.x - pointA.x),
-		stepY = sign(pointB.y - pointA.y);
-
-	if (dy > dx) {
-		flag = true;
-		std::swap(dx, dy);
-	}
-
-	int k = 2 * dy - dx;
-
-	for (int i = 0; i < dx; i++)
-	{
-		_colorPointDESTRUCTIVE(buffer, activePoint, RGB{ 0, 0, 0 });
-
-		if (k >= 0) {
-			if (flag) {
-				activePoint.x += stepX;
-			}
-			else {
-				activePoint.y += stepY;
-			}
-			k -= 2 * dx;
-			_colorPointDESTRUCTIVE(buffer, activePoint, RGB{ 0, 0, 0 });
-		}
-
-		if (flag) {
-			activePoint.y += stepY;
-		}
-		else {
-			activePoint.x += stepX;
-		}
-
-		k += 2 * dy;
-	}
-}
-
-void AlgorithmEngine::_colorPointDESTRUCTIVE(vector<RGB>& buffer, const Point & p, const RGB & color)
-{
-	buffer[p.calcOffset()] = color;
 }
 
 void AlgorithmEngine::drawPoly(const vector<Point> & poly, RGB color, GLfloat lineWidth) const
@@ -250,7 +197,7 @@ void AlgorithmEngine::drawLine(const Line & line, RGB color, GLfloat lineWidth) 
 	glEnd();
 }
 
-vector<AlgorithmEngine::Line> AlgorithmEngine::castToLineLoop(const vector<Point>& points) const
+vector<Line> AlgorithmEngine::castToLineLoop(const vector<Point>& points) const
 {
 	vector<Line> result;
 	if (points.size() < 2) {
@@ -266,12 +213,8 @@ vector<AlgorithmEngine::Line> AlgorithmEngine::castToLineLoop(const vector<Point
 	return result;
 }
 
-void AlgorithmEngine::drawLineDESTRUCTIVE(const Point & pointA, const Point & pointB)
-{
-	_drawLineDESTRUCTIVE(_buffer, pointA, pointB);
-}
 
-vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman()
+vector<Line> AlgorithmEngine::goSutherlandHodgeman()
 {
 	vector<Point> poly(_vertices);
 	vector<Line> edges(_edges);
@@ -349,7 +292,7 @@ vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman()
 	return edges;
 }
 
-vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman(const vector<Line> & poly, const vector<Line> & clip)
+vector<Line> AlgorithmEngine::goSutherlandHodgeman(const vector<Line> & poly, const vector<Line> & clip)
 {
 	vector<Line> edges(poly);
 	for (const Line & c : clip) {
@@ -358,7 +301,7 @@ vector<AlgorithmEngine::Line> AlgorithmEngine::goSutherlandHodgeman(const vector
 	return edges;
 }
 
-vector<AlgorithmEngine::Line> AlgorithmEngine::_clip(const vector<Line> & edges, const Line & clip)
+vector<Line> AlgorithmEngine::_clip(const vector<Line> & edges, const Line & clip)
 {
 	vector <Point> intersectionPoints;
 	vector <Line> newEdges;
@@ -378,6 +321,7 @@ vector<AlgorithmEngine::Line> AlgorithmEngine::_clip(const vector<Line> & edges,
 		for (auto & edge : cropEdges) {
 			if (isInside(_vertices, edge.center())) {
 				cout << "OK" << endl;
+				//for ()
 				newEdges.push_back(edge);
 			}
 		}
@@ -452,30 +396,13 @@ bool AlgorithmEngine::isClockwise() const
 	return sum < 0;
 }
 
-
-int AlgorithmEngine::Point::calcOffset() const
+bool AlgorithmEngine::isClockwise(const vector<Point>& poly) const
 {
-	return x + y * width;
-}
-
-string AlgorithmEngine::Point::toString() const
-{
-		std::stringstream ss;
-		ss << '(' << x << "; " << y << ')';
-		return ss.str();
-}
-
-AlgorithmEngine::Point AlgorithmEngine::Line::center() const
-{
-	return Point {
-		(beg.x + end.x) / 2,
-		(beg.y + end.y) / 2
-	};
-}
-
-string AlgorithmEngine::Line::toString() const
-{
-	std::stringstream ss;
-	ss << beg.toString() << " -> " << end.toString();
-	return ss.str();
+	auto & r = poly;
+	long sum = 0;
+	for (int i = 1; i <= r.size(); i++) {
+		sum += r[i % r.size()].x *
+			(r[(i + 1) % r.size()].y - r[(i - 1) % r.size()].y);
+	}
+	return sum < 0;
 }

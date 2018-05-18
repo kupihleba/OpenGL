@@ -3,9 +3,6 @@
 #include <sstream>
 #include <fstream>
 
-#define use(ns) using ns;
-use(std::cout) use(std::endl)
-
 ShaderFactory::ShaderFactory() 
 {
 	_basicShader = 0;
@@ -51,7 +48,7 @@ GLuint ShaderFactory::_compileShader(GLuint type, const string & src)
 	return id;
 }
 
-GLuint ShaderFactory::loadShader(const string & path)
+GLuint ShaderFactory::loadShader(string && path)
 {
 	enum Type {
 		UNDEF, VERTEX, FRAGMENT
@@ -59,7 +56,7 @@ GLuint ShaderFactory::loadShader(const string & path)
 	Type mode = UNDEF;
 	std::stringstream vertexCode, fragmentCode;
 
-	std::ifstream stream(path);
+	std::ifstream stream(std::move(path));
 
 	string line;
 	while (getline(stream, line))

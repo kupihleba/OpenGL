@@ -4,8 +4,9 @@
 #include <engine/AlgorithmEngine.h>
 
 int main() {
-	//MyEngine engine;
-	AlgorithmEngine engine;
+	MyEngine engine;
+	//AlgorithmEngine engine;
+	
 	return 0;
 }
 

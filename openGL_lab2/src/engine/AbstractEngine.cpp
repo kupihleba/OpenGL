@@ -33,7 +33,7 @@ AbstractEngine::AbstractEngine()
 		throw std::exception("glewInit failed!");
 	}
 	else {
-		debug(glGetString(GL_VERSION));
+		prt(glGetString(GL_VERSION));
 	}
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f); // TODO: move
 	

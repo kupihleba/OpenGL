@@ -6,11 +6,12 @@
 #include <objects/Spiral.h>
 #include <ShaderFactory.h>
 #include <memory>
+#include <engine/AbstractEngine.h>
+#include <utils/kupihleba.h>
 
-#define use(ns) using ns;
-use(std::string) use(std::shared_ptr)
+using std::shared_ptr;
 
-class MyEngine
+class MyEngine : public AbstractEngine
 {
 public:
 	MyEngine();
@@ -22,10 +23,6 @@ public:
 	};
 
 private:
-	GLFWwindow *_activity;
-	int _activityWidth = 1280;
-	int _activityHeight = 768;
-
 	Show _mode;
 
 	GLuint _basicShader;
@@ -33,8 +30,7 @@ private:
 	GLuint _buffer;
 
 	void _initObjects();
-	void _draw();
-	void _destroyObjects();
+	virtual void _draw() override;
 
 	ShaderFactory _shaderFactory;
 
