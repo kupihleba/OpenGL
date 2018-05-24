@@ -26,3 +26,8 @@ string Line::toString() const {
 	ss << beg.toString() << " -> " << end.toString();
 	return ss.str();
 }
+
+glm::vec3 Point3D::toVec() const
+{
+	return glm::vec3(x, y, z);
+}

@@ -10,11 +10,11 @@ ShaderFactory::ShaderFactory()
 
 ShaderFactory::~ShaderFactory() {}
 
-GLuint ShaderFactory::_createShader(string & vertexShader, string & fragmentShader)
+GLuint ShaderFactory::_createShader(string && vertexShader, string && fragmentShader)
 {
 	GLuint prog = glCreateProgram();
-	GLuint vs = _compileShader(GL_VERTEX_SHADER, vertexShader);
-	GLuint fs = _compileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	GLuint vs = _compileShader(GL_VERTEX_SHADER, std::move(vertexShader));
+	GLuint fs = _compileShader(GL_FRAGMENT_SHADER, std::move(fragmentShader));
 
 	glAttachShader(prog, vs);
 	glAttachShader(prog, fs);
@@ -40,7 +40,19 @@ GLuint ShaderFactory::_compileShader(GLuint type, const string & src)
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
 		char *msg = (char*)alloca(len * sizeof(len));
 		glGetShaderInfoLog(id, len, &len, msg);
-		cout << "Failed to compile the " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader" << endl;
+		cout << "Failed to compile the ";
+		switch (type)
+		{
+		case GL_VERTEX_SHADER:
+			cout << "vertex";
+			break;
+		case GL_FRAGMENT_SHADER:
+			cout << "fragment";
+			break;
+		default:
+			cout << "unknown";
+		}
+		cout << "shader" << endl;
 		cout << msg << endl;
 		return 0;
 	}
@@ -90,4 +102,9 @@ GLuint ShaderFactory::getBasicShader()
 		_basicShader = loadShader("res/shaders/factory/basic.shader");
 	}
 	return _basicShader;
+}
+
+std::shared_ptr<Shader> ShaderFactory::getSuperShader()
+{
+	return std::shared_ptr<Shader>(new Shader(loadShader("res/shaders/factory/basic.shader")));
 }

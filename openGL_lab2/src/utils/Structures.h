@@ -1,6 +1,7 @@
 #pragma once
 #include <GLFW/glfw3.h>
 #include <string>
+#include <glm/glm.hpp>
 
 using std::string;
 
@@ -23,5 +24,12 @@ struct RGB {
 	GLfloat r;
 	GLfloat g;
 	GLfloat b;
+};
+
+struct Point3D {
+	float x;
+	float y;
+	float z;
+	glm::vec3 toVec() const;
 };
 

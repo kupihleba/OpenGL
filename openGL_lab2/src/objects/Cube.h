@@ -4,9 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "Object.h"
-
-#define use(ns) using ns;
-use(std::vector)
+#include <utils/kupihleba.h>
 
 namespace obj {
 
@@ -16,13 +14,16 @@ namespace obj {
 		Cube(GLuint shader);
 		~Cube();
 
-		void draw();
+		virtual void _draw() override;
+
+		virtual string toString() const override;
 
 	private:
+
+		const string name = "Cube";
+
 		GLuint _VBufObj;
 		// GLuint _VArrObj;
-
-		GLuint _shader;
 	};
 
 }

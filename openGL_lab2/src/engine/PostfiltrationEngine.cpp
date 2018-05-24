@@ -16,11 +16,6 @@ PostfiltrationEngine::PostfiltrationEngine()
 	_buffer.resize(_activity.width * _activity.height * floatsInVertex);
 }
 
-
-PostfiltrationEngine::~PostfiltrationEngine()
-{
-}
-
 void PostfiltrationEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_PRESS) {

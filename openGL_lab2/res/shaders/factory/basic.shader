@@ -1,17 +1,18 @@
 #vertex
 #version 330 core
-layout(location = 0) in vec4 position;
+in vec3 position;
 uniform mat4 myTransformation;
+in vec3 normal;
 
 void main()
 {
-	gl_Position = position * myTransformation;
+	gl_Position = vec4(position, 1) * myTransformation;
 }
 
 #fragment
 #version 330 core
 
-layout(location = 0) out vec4 color;
+out vec4 color;
 uniform vec4 myColor;
 
 void main()

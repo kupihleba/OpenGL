@@ -15,7 +15,6 @@ class MyEngine : public AbstractEngine
 {
 public:
 	MyEngine();
-	~MyEngine();
 
 	enum Show {
 		CUBE,
@@ -24,10 +23,6 @@ public:
 
 private:
 	Show _mode;
-
-	GLuint _basicShader;
-	GLuint _staticShader;
-	GLuint _buffer;
 
 	void _initObjects();
 	virtual void _draw() override;
@@ -42,8 +37,6 @@ private:
 
 	shared_ptr<obj::Spiral> _spiral;
 	shared_ptr<obj::Spiral> _projSpiral;
-
-	void _mainLoop();
 
 	static void _keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void _window_size_callback(GLFWwindow* window, int width, int height);

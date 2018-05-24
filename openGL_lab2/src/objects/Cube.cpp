@@ -12,7 +12,7 @@
 
 using namespace obj;
 
-Cube::Cube(GLuint shader):Object()
+Cube::Cube(GLuint shader):Object(shader)
 {
 	_shader = shader;
 	_view = GL_LINE;
@@ -88,14 +88,9 @@ Cube::~Cube()
 }
 
 
-void obj::Cube::draw() {
-	glUseProgram(_shader);
-	glm::mat4 res = _getTransformations();
-
-	GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
+void obj::Cube::_draw() {
 	GLint myColor = glGetUniformLocation(_shader, "myColor");
 
-	glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(res));
 	glUniform4f(myColor, 0.0f, 0.0f, 1.0f, 0.9f);
 	glPolygonMode(GL_FRONT_AND_BACK, _view);
 
@@ -105,5 +100,10 @@ void obj::Cube::draw() {
 	glEnableVertexAttribArray(0);
 
 	glDrawArrays(GL_QUADS, 0, DIM * EDGES * PT_PER_EDGE);
-	//glBindVertexArray(0);
+	glBindVertexArray(0);
+}
+
+string obj::Cube::toString() const
+{
+	return "Cube";
 }

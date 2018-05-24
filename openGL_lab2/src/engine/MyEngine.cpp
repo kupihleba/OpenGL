@@ -13,18 +13,11 @@ MyEngine::MyEngine()
 	_setWindowSizeCallback(_window_size_callback);
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	_basicShader = _shaderFactory.loadShader("res/shaders/basic.shader");
-	_staticShader = _shaderFactory.loadShader("res/shaders/static.shader");
 
 	obj::Object::setScreenDims(_activity.width, _activity.height);
 
 	_initObjects();
 	_run();
-}
-
-MyEngine::~MyEngine()
-{
-	glfwTerminate();
 }
 
 void MyEngine::_initObjects()
@@ -33,7 +26,7 @@ void MyEngine::_initObjects()
 	_miniCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	_projCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	
-	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
+	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getSuperShader()));
 	_projSpiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
 
 	_spiral->setPosition(0.0f, -0.7f, 0.0f)
@@ -91,17 +84,6 @@ void MyEngine::_draw()
 			break;
 		}	
 		glfwSwapBuffers(_activity.ref);
-}
-
-void MyEngine::_mainLoop()
-{
-	while (!glfwWindowShouldClose(_activity.ref))
-	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		_draw();
-		glfwSwapBuffers(_activity.ref);
-		glfwPollEvents();
-	}
 }
 
 void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -201,7 +183,6 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 		case GLFW_KEY_1:
 			context->_spiral->reconstruct(10);
 			break;
-
 		case GLFW_KEY_2:
 			context->_spiral->reconstruct(20);
 			break;
@@ -216,6 +197,9 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_6:
 			context->_spiral->reconstruct(60);
+			break;
+		case GLFW_KEY_7:
+			context->_spiral->reconstruct(70);
 			break;
 		default:
 			break;

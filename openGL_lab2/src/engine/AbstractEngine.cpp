@@ -47,7 +47,11 @@ AbstractEngine::AbstractEngine()
 AbstractEngine::~AbstractEngine()
 {
 	glfwDestroyWindow(_activity.ref);
-	glfwTerminate();
+}
+
+void AbstractEngine::start()
+{
+	_run();
 }
 
 
@@ -76,13 +80,28 @@ std::function <void(GLFWwindow* window, int key, int scancode, int action, int m
 
 void AbstractEngine::_run()
 {
+	double lastTime = glfwGetTime();
+	uint framesCounter = 0;
 	while (!glfwWindowShouldClose(_activity.ref))
 	{
+		//glfwMakeContextCurrent(_activity.ref);
 		//glClear(GL_COLOR_BUFFER_BIT);
 		_draw();
 		//glfwSwapBuffers(_activity.ref);
 		glfwPollEvents();
+		framesCounter++;
+		double currentTime = glfwGetTime();
+		if (double delta = currentTime - lastTime >= 1.0) {
+			cout << "FPS " << framesCounter / delta << endl;
+			lastTime = glfwGetTime();
+			framesCounter = 0;
+		}
 	}
+	this->~AbstractEngine();
+}
+void AbstractEngine::_draw()
+{
+	_scene.draw();
 }
 void AbstractEngine::_setWindowSizeCallback(decltype(_windowSizeCallback) callback)
 {
@@ -95,8 +114,6 @@ void AbstractEngine::_setKeyCallback(decltype(_keyCallback) callback)
 
 void AbstractEngine::_setMouseButtonCallback(decltype(_mouseButtonCallback) callback)
 {
-	std::cout << "OK" << std::endl;
-
 	_mouseButtonCallback = callback;
 }
 

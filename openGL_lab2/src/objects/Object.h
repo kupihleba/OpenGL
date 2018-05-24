@@ -2,7 +2,11 @@
 #include <glm/glm.hpp>
 #include <tuple>
 #include <GL/glew.h>
+#include <string>
 #include <GLFW/glfw3.h>
+#include <utils/kupihleba.h>
+#include <Shader.h>
+#include <memory>
 
 namespace obj {
 
@@ -13,7 +17,8 @@ namespace obj {
 	class Object
 	{
 	public:
-		Object();
+		Object(GLint shader);
+		Object(std::shared_ptr<Shader> shader);
 		virtual ~Object();
 
 		/// <summary>
@@ -67,12 +72,23 @@ namespace obj {
 		/// <summary>
 		/// Main draw method
 		/// </summary>
-		virtual void draw();
+		void draw();
 
+		virtual string toString() const;
+
+		/// <summary>
+		/// Switches between GL_FILL, GL_LINE, etc
+		/// </summary>
 		void setView(GLint view);
-		GLint getView();
+
+		/// <returns>
+		/// Current gl view (GL_FILL, GL_LINE, etc)
+		/// </returns>
+		GLint getView() const;
 
 	protected:
+
+		virtual void _draw();
 
 		// Screen transformation:
 		static glm::mat4 _screen_transf;
@@ -94,5 +110,9 @@ namespace obj {
 		glm::mat4 _getTransformations();
 
 		GLint _view;
+
+		GLint _shader;
+
+		std::shared_ptr<Shader> _newShader;
 	};
 }

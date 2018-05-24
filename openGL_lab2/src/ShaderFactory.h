@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <utils/kupihleba.h>
+#include <Shader.h>
+#include <memory>
 
 class ShaderFactory
 {
@@ -25,9 +27,10 @@ public:
 	/// Shader id
 	/// </returns>
 	/*static*/ GLuint getBasicShader();
+	std::shared_ptr<Shader> getSuperShader();
 
 private:
-	GLuint _createShader(string & vertexShader, string & fragmentShader);
+	GLuint _createShader(string && vertexShader, string && fragmentShader);
 	GLuint _compileShader(GLuint type, const string & src);
 	GLuint _basicShader;
 };

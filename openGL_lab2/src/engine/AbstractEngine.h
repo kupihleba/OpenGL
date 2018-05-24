@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include <utils/kupihleba.h>
+#include <Scene.h>
 
 using std::vector;
 
@@ -12,6 +13,13 @@ class AbstractEngine
 public:
 	AbstractEngine();
 	~AbstractEngine();
+
+	template <class T>
+	std::enable_if_t<std::is_base_of<obj::Object, T>::value, void> addObject(T & object) {
+		_scene.addObject(object);
+	};
+
+	virtual void start();
 
 protected:
 	struct Activity {
@@ -38,9 +46,10 @@ protected:
 	void _setWindowSizeCallback(decltype(_windowSizeCallback) callback);
 	void _setKeyCallback(decltype(_keyCallback) callback);
 	void _setMouseButtonCallback(decltype(_mouseButtonCallback) callback);
+	Scene _scene;
 
 	std::function <void(GLFWwindow* window, int key, int scancode, int action, int mods)> _getKeyCallback();
 	virtual void _run();
-	virtual void _draw() {};
+	virtual void _draw();
 };
 

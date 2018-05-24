@@ -12,7 +12,6 @@ class PostfiltrationEngine : public AbstractEngine
 {
 public:
 	PostfiltrationEngine();
-	~PostfiltrationEngine();
 private:
 	
 	const size_t floatsInVertex = 3;
