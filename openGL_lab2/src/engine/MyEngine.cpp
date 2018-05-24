@@ -27,7 +27,7 @@ void MyEngine::_initObjects()
 	_projCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	
 	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getSuperShader()));
-	_projSpiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
+	_projSpiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getSuperShader()));
 
 	_spiral->setPosition(0.0f, -0.7f, 0.0f)
 		.setSize(0.25f)

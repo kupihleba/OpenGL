@@ -108,6 +108,24 @@ GLuint &Shader::getBufAllocation()
 
 void Shader::regenerateBuffer()
 {
-	glDeleteBuffers(1, &_vbo);
-	glGenBuffers(1, &_vbo);
+	const GLsizei DIM = 3;
+	const GLsizei RGBA = 4;
+	glDeleteBuffers(1, &_vbo); // Otherwise it doesn't handle
+	glGenBuffers(1, &_vbo); // :(
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo); // Bind VBO first
+	glBindVertexArray(_vao); // Bind VAO properties to VBO
+	{
+		GLsizei packSize = DIM * sizeof(GLfloat) * 2;
+
+		glEnableVertexAttribArray(_position);
+		glVertexAttribPointer(_position, DIM, GL_FLOAT, GL_FALSE, packSize, (GLvoid*)0);
+
+		glEnableVertexAttribArray(_normal);
+		glVertexAttribPointer(_normal, DIM, GL_FLOAT, GL_FALSE, packSize, (GLvoid*)3);
+
+		//glEnableVertexAttribArray(_color);
+		//glVertexAttribPointer(_color, RGBA, GL_FLOAT, GL_FALSE, RGBA * sizeof(GLfloat) + DIM * sizeof(GLfloat) * 2, (GLvoid*)6);
+	}
+	glBindVertexArray(0); // Unbind VBO
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind VBO
 }

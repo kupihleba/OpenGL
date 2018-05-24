@@ -12,8 +12,6 @@ namespace obj {
 	class Spiral : public Object
 	{
 	public:
-		//using obj::Object::Object;
-		Spiral(GLuint shader);
 		Spiral(std::shared_ptr<Shader> shader);
 		
 		virtual void _draw() override;
@@ -27,8 +25,6 @@ namespace obj {
 	private:
 
 		std::vector<float> _vertices;
-
-		GLuint _VBufObj;
 
 		int _precision;
 
