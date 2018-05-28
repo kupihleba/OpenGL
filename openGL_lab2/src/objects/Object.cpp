@@ -8,25 +8,11 @@ using namespace obj;
 
 glm::mat4 Object::_screen_transf(1.0f);
 
-obj::Object::Object(GLint shader)
-	:_newShader(nullptr)
-{
+obj::Object::Object() {
 	setSize(1.0f);
 	setPosition(0.0f, 0.0f, 0.0f);
 	setRotation(0.0f, 0.0f, 0.0f);
 	clsTransformation();
-	_view = GL_LINE;
-
-	_shader = shader;
-}
-
-obj::Object::Object(std::shared_ptr<Shader> shader)
-	:_newShader(shader) {
-	setSize(1.0f);
-	setPosition(0.0f, 0.0f, 0.0f);
-	setRotation(0.0f, 0.0f, 0.0f);
-	clsTransformation();
-	_view = GL_LINE;
 }
 
 Object::~Object() {}
@@ -119,44 +105,11 @@ void obj::Object::clsTransformation() {
 	_custom_transformation = glm::mat4(1.0f);
 }
 
-void obj::Object::draw() {
-	if (_newShader.get() != nullptr) {
-		_newShader->enable();
-		_newShader->tranformation(_getTransformations());
-		glPolygonMode(GL_FRONT_AND_BACK, _view);
-		_draw();
-		_newShader->disable();
-	} else {
-		glUseProgram(_shader);
-		GLint myTranformation = glGetUniformLocation(_shader, "myTransformation");
-		glUniformMatrix4fv(myTranformation, 1, GL_FALSE, glm::value_ptr(_getTransformations()));
-		GLint myColor = glGetUniformLocation(_shader, "myColor");
-		glUniform4f(myColor, 1.0f, 1.0f, 0.3f, 0.9f);
-
-		_draw();
-		glEnableVertexAttribArray(0);
-		glBindVertexArray(0);
-		glUseProgram(0);
-	}
-}
-
 string obj::Object::toString() const {
 	return "Object";
 }
 
-void obj::Object::setView(GLint view) {
-	_view = view;	
-}
 
-GLint obj::Object::getView() const {
-	return _view;
-}
-
-void obj::Object::_draw() {
-	throw std::exception("Method _draw was not defined!");
-}
-
-
-glm::mat4 obj::Object::_getTransformations() {	
+glm::mat4 obj::Object::_getTransformations() {
 	return  _rotation * _size * _custom_transformation * _position * _screen_transf; // The order is from left to right!
 }

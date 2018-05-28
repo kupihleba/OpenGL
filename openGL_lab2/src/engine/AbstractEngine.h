@@ -5,6 +5,7 @@
 #include <functional>
 #include <utils/kupihleba.h>
 #include <Scene.h>
+#include <lib/Camera.h>
 
 using std::vector;
 
@@ -25,7 +26,8 @@ protected:
 	struct Activity {
 		GLFWwindow *ref;
 		int width = 1280;
-		int height = 768;
+		int height = 768; 
+		void setFullscreen();
 	} _activity;
 
 	//virtual void _keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -46,7 +48,11 @@ protected:
 	void _setWindowSizeCallback(decltype(_windowSizeCallback) callback);
 	void _setKeyCallback(decltype(_keyCallback) callback);
 	void _setMouseButtonCallback(decltype(_mouseButtonCallback) callback);
+	
 	Scene _scene;
+	Camera _camera;
+
+	void setupMonitor();
 
 	std::function <void(GLFWwindow* window, int key, int scancode, int action, int mods)> _getKeyCallback();
 	virtual void _run();

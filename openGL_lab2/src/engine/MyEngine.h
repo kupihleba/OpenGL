@@ -7,6 +7,7 @@
 #include <ShaderFactory.h>
 #include <memory>
 #include <engine/AbstractEngine.h>
+#include <utils/Structures.h>
 #include <utils/kupihleba.h>
 
 using std::shared_ptr;
@@ -16,20 +17,18 @@ class MyEngine : public AbstractEngine
 public:
 	MyEngine();
 
-	enum Show {
-		CUBE,
-		SPIRAL
-	};
-
 private:
-	Show _mode;
+
+	ObjectType _mode;
+	vector<shared_ptr<Shader>> _shaders;
+	Light _light;
 
 	void _initObjects();
 	virtual void _draw() override;
 
 	ShaderFactory _shaderFactory;
 
-	shared_ptr<obj::Object> _focus;
+	shared_ptr<obj::Drawable> _focus;
 
 	shared_ptr<obj::Cube> _cube;
 	shared_ptr<obj::Cube> _miniCube;

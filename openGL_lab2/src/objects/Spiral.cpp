@@ -5,38 +5,43 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtx/normal.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <utils/kupihleba.h>
+
+#define $ _vertices.push_back(1.0f);
 #include <utils/Structures.h>
+#include <limits>
 # define PI 3.14159265358979323846 
 
 using namespace obj;
 
 obj::Spiral::Spiral(std::shared_ptr<Shader> shader)
-	:Object(shader)
+	:Drawable(shader)
 {
-	//_newShader->enable(); ??
-	_precision = 50;
+	_precision = 90;
 	_build(_precision, 0.4f, 1.0f, 2.0f);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _newShader->getBufAllocation());
-	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//_newShader->disable(); ??
 }
-
 
 
 void obj::Spiral::_draw()
 {
-	_newShader->color(1.0f, 0.3f, 0.3f, 0.9f);
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size() / 3);
+	//_newShader->color(1.0f, 0.3f, 0.3f, 0.9f);
+	if (Drawable::_vertices.size() > std::numeric_limits<GLsizei>::max())
+		throw std::exception("vertices size is too big");
+	glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(_vertices.size() / 3));
 }
 
-
-Spiral::~Spiral()
+void obj::Spiral::_defineVao()
 {
-
+	const GLsizei DIM = 3;
+	const GLsizei ARGB = 4;
+	using proto::AttributeType;
+	*this << Chunk{ AttributeType::POSITION, DIM}
+	      << Chunk{ AttributeType::NORMAL, DIM }
+	      << Chunk{ AttributeType::TEXTURE, 2 }
+	      << Chunk{ AttributeType::COLOR, ARGB };
 }
+
+
+Spiral::~Spiral() {}
 
 void obj::Spiral::_build(int precision, float r, float R, float len)
 {
@@ -62,24 +67,44 @@ void obj::Spiral::_build(int precision, float r, float R, float len)
 	using std::move;
 	for (v = 0; v <= 2 * PI * len + delta; v += delta) {
 		for (u = 0; u <= 2 * PI + delta; u += delta) {
-			Point3D a = _f(u, v),
+			Point3D 
+				a = _f(u, v),
 				b = _f(u, v + delta),
 				c = _f(u + delta, v);
 			pushBack(a);
 			pushNormal(a, b, c);
+			_vertices.push_back(u / (2 * PI + delta));
+			_vertices.push_back(v / (2 * PI * len + delta));
+			$ $ $ $
 			pushBack(b);
 			pushNormal(a, b, c);
+			_vertices.push_back(u / (2 * PI + delta));
+			_vertices.push_back((v + delta) / (2 * PI * len + delta));
+			$ $ $ $
 			pushBack(c);
 			pushNormal(a, b, c);
+			_vertices.push_back((u + delta) / (2 * PI + delta));
+			_vertices.push_back(v / (2 * PI * len + delta));
+			$ $ $ $
+
 			a = _f(u + delta, v + delta);
 			b = _f(u, v + delta);
 			c = _f(u + delta, v);
 			pushBack(a);
-			pushNormal(a, b, c);
+			pushNormal(b, a, c);
+			_vertices.push_back((u + delta) / (2 * PI + delta));
+			_vertices.push_back((v + delta) / (2 * PI * len + delta));
+			$ $ $ $
 			pushBack(b);
-			pushNormal(a, b, c);
+			pushNormal(b, a, c);
+			_vertices.push_back(u / (2 * PI + delta));
+			_vertices.push_back((v + delta) / (2 * PI * len + delta));
+			$ $ $ $
 			pushBack(c);
-			pushNormal(a, b, c);
+			pushNormal(b, a, c);
+			_vertices.push_back((u + delta) / (2 * PI + delta));
+			_vertices.push_back(v / (2 * PI * len + delta));
+			$ $ $ $
 		}
 	}
 	/*for (u = 0; u <= 2 * PI + delta; u += delta) { 
@@ -89,6 +114,7 @@ void obj::Spiral::_build(int precision, float r, float R, float len)
 		_vertices.push_back(get<1>(coords));
 		_vertices.push_back(get<2>(coords));
 	}*/
+	loadVertices();
 }
 
 void obj::Spiral::pushBack(Point3D point)
@@ -106,16 +132,15 @@ void obj::Spiral::pushNormal(const Point3D & a, const Point3D & b, const Point3D
 	_vertices.push_back(std::move(n.z));
 }
 
-/// ATTENTION! RACE CONDITIONS HERE?
 void obj::Spiral::reconstruct(int precision) 
 {
 	_precision = precision;
 	_build(precision, 0.4f, 1.0f, 2.0f);
-	_newShader->regenerateBuffer();
-	glBindBuffer(GL_ARRAY_BUFFER, _newShader->getBufAllocation());
+	//_newShader->regenerateBuffer();
+/*	glBindBuffer(GL_ARRAY_BUFFER, _newShader->getBufAllocation());
 	
 	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 }
 
 int obj::Spiral::getBuildPrecision()
@@ -127,4 +152,3 @@ string obj::Spiral::toString() const
 {
 	return "Spiral";
 }
-

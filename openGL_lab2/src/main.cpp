@@ -7,15 +7,22 @@
 #include <utils/kupihleba.h>
 
 int main() {
+	//try {
+		MyEngine engine;
+		//ShaderFactory factory;
 
-	MyEngine engine;
-	//ShaderFactory factory;
+		//AlgorithmEngine engine;
 
-	//AlgorithmEngine engine;
-	
-	//system("Pause");
-	glfwTerminate();
-	return 0;
+		//system("Pause");
+		glfwTerminate();
+	/*}
+	catch (const std::exception &e) {
+		std::cerr << e.what() << endl;
+		system("pause");
+		return EXIT_FAILURE;
+	}*/
+
+	return EXIT_SUCCESS;
 }
 
 #endif

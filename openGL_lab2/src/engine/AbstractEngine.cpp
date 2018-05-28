@@ -5,8 +5,11 @@ AbstractEngine::AbstractEngine()
 	if (!glfwInit()) {
 		throw std::exception("Glew could not be initialized!");
 	}
-	
+
+	_activity.setFullscreen();
+	//_activity.ref = glfwCreateWindow(_activity.width, _activity.height, "Kupihleba project", glfwGetPrimaryMonitor(), NULL);
 	_activity.ref = glfwCreateWindow(_activity.width, _activity.height, "Kupihleba project", NULL, NULL);
+
 
 	if (!_activity.ref)
 	{
@@ -73,6 +76,12 @@ void AbstractEngine::_staticMouseButtonCallback(GLFWwindow * window, int button,
 	context->_mouseButtonCallback(window, button, action, mods);
 }
 
+void AbstractEngine::setupMonitor()
+{
+	GLFWmonitor * monitor = glfwGetPrimaryMonitor();
+	glfwGetMonitorPhysicalSize(monitor, &_activity.width, &_activity.height);
+}
+
 std::function <void(GLFWwindow* window, int key, int scancode, int action, int mods)> AbstractEngine::_getKeyCallback()
 {
 	return _keyCallback;
@@ -117,42 +126,10 @@ void AbstractEngine::_setMouseButtonCallback(decltype(_mouseButtonCallback) call
 	_mouseButtonCallback = callback;
 }
 
-/*
-void AbstractEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void AbstractEngine::Activity::setFullscreen()
 {
-	debug("unhandled: " << (char)key);
-}*/
-/*
-void AbstractEngine::_windowSizeCallback(GLFWwindow * window, int width, int height)
-{
-	debug("unhandled: " << width << 'x' << height);
-}*/
-/*
-void AbstractEngine::_mouseButtonCallback(GLFWwindow * window, int button, int action, int mods)
-{
-#ifdef DEBUG
-	double x, y;
-	glfwGetCursorPos(window, &x, &y);
-	debug("unhandled click (" << x << "; " << y << ')');
-#endif
-}*/
-/*
-void AbstractEngine::_staticWindowSizeCallback(GLFWwindow * window, int width, int height)
-{
-	AbstractEngine *context = static_cast<AbstractEngine*>(glfwGetWindowUserPointer(window));
-	context->_windowSizeCallback(window, width, height);
-}
+	const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-void AbstractEngine::_staticKeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
-{
-	AbstractEngine *context = static_cast<AbstractEngine*>(glfwGetWindowUserPointer(window));
-	context->_keyCallback(window, key, scancode, action, mods);
+	width = mode->width;
+	height = mode->height;
 }
-void AbstractEngine::_staticMouseButtonCallback(GLFWwindow * window, int button, int action, int mods)
-{
-	AbstractEngine *context = static_cast<AbstractEngine*>(glfwGetWindowUserPointer(window));
-	context->_mouseButtonCallback(window, button, action, mods);
-}
-*/
-
-

@@ -26,7 +26,8 @@ public:
 	/// <returns>
 	/// Shader id
 	/// </returns>
-	/*static*/ GLuint getBasicShader();
+	/*static*/ std::shared_ptr<Shader> getBasicShader();
+
 	std::shared_ptr<Shader> getSuperShader();
 
 private:

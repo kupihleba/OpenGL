@@ -40,20 +40,20 @@ GLuint ShaderFactory::_compileShader(GLuint type, const string & src)
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
 		char *msg = (char*)alloca(len * sizeof(len));
 		glGetShaderInfoLog(id, len, &len, msg);
-		cout << "Failed to compile the ";
+		std::cerr << "Failed to compile the ";
 		switch (type)
 		{
 		case GL_VERTEX_SHADER:
-			cout << "vertex";
+			std::cerr << "vertex";
 			break;
 		case GL_FRAGMENT_SHADER:
-			cout << "fragment";
+			std::cerr << "fragment";
 			break;
 		default:
-			cout << "unknown";
+			std::cerr << "unknown";
 		}
-		cout << "shader" << endl;
-		cout << msg << endl;
+		std::cerr << "shader" << endl;
+		std::cerr << msg << endl;
 		return 0;
 	}
 
@@ -96,15 +96,15 @@ GLuint ShaderFactory::loadShader(string && path)
 	return _createShader(vertexCode.str(), fragmentCode.str());
 }
 
-GLuint ShaderFactory::getBasicShader()
+std::shared_ptr<Shader> ShaderFactory::getBasicShader()
 {
 	if (!_basicShader) {
 		_basicShader = loadShader("res/shaders/factory/basic.shader");
 	}
-	return _basicShader;
+	return std::shared_ptr<Shader>(new Shader(_basicShader));
 }
 
 std::shared_ptr<Shader> ShaderFactory::getSuperShader()
 {
-	return std::shared_ptr<Shader>(new Shader(loadShader("res/shaders/factory/basic.shader")));
+	return std::shared_ptr<Shader>(new Shader(loadShader("res/shaders/factory/light.shader")));
 }

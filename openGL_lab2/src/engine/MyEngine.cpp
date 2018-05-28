@@ -5,29 +5,53 @@
 #include <tuple>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <objects/Drawable.h>
 #include <utils/kupihleba.h>
+
+/*
+ * Учет ослабления интенсивности света с расстоянием от источника;
+ * 
+ * Моделирование движения тела (с заданной начальной скоростью) 
+ * при условии абсолютно упругого отражения объекта от границ
+ * некоторого ограничивающего объема (регулярной формы);
+ *
+ * Использование текстуры для определения свойств
+ * поверхности (модулирование коэффициента диффузного отражения);
+ *
+ */
 
 MyEngine::MyEngine()
 {
 	_setKeyCallback(_keyCallback);
 	_setWindowSizeCallback(_window_size_callback);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	obj::Object::setScreenDims(_activity.width, _activity.height);
 
 	_initObjects();
+	_mode = SPIRAL;
 	_run();
 }
 
 void MyEngine::_initObjects()
 {
-	_cube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
+	glEnable(GL_DEPTH_TEST);
+	auto shader(_shaderFactory.getSuperShader());
+	_shaders.push_back(shader);
+	
+	_cube = shared_ptr<obj::Cube>(new obj::Cube(shader));
 	_miniCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
 	_projCube = shared_ptr<obj::Cube>(new obj::Cube(_shaderFactory.getBasicShader()));
-	
-	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getSuperShader()));
-	_projSpiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getSuperShader()));
+
+	_spiral = shared_ptr<obj::Spiral>(new obj::Spiral(shader));
+	_projSpiral = shared_ptr<obj::Spiral>(new obj::Spiral(_shaderFactory.getBasicShader()));
+
+	auto textureA = obj::Drawable::loadTexture("D:\\progi\\С++\\openGL_lab2\\openGL_lab2\\res\\textures\\abstract.bmp");
+	auto textureB = obj::Drawable::loadTexture("D:\\progi\\С++\\openGL_lab2\\openGL_lab2\\res\\textures\\galaxy.bmp");
+
+	_spiral->setTexture(textureA);
+	_cube->setTexture(textureB);
 
 	_spiral->setPosition(0.0f, -0.7f, 0.0f)
 		.setSize(0.25f)
@@ -62,28 +86,42 @@ void MyEngine::_initObjects()
 		.setTransformation(glm::make_mat4(proj));
 }
 
-
 void MyEngine::_draw()
 {
-		glClear(GL_COLOR_BUFFER_BIT);
-		switch (_mode)
-		{
-		case CUBE:
-			_focus = std::dynamic_pointer_cast<obj::Object, obj::Cube>(_cube);
-			_cube->draw();
-			_projCube->draw();
-			_miniCube->draw();
-			break;
-		case SPIRAL:
-			_focus = std::dynamic_pointer_cast<obj::Object, obj::Spiral>(_spiral);
-			_focus = _spiral;
-			_spiral->draw();
-			_projSpiral->draw();
-			break;
-		default:
-			break;
-		}	
-		glfwSwapBuffers(_activity.ref);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LESS);
+
+	_light = {
+		_camera.position(),
+		glm::vec3(1.0f, 1.0f, 1.0f) // white light
+	};
+	//for (auto & shader : _shaders) {
+		_shaders[0]->enable()
+			.camera(_camera.matrix())
+			.light(_light.position, _light.intensities)
+			.color(1.0f, 0.5f, 0.5f, 1.0f);
+		//for ever;
+	//}
+	switch (_mode)
+	{	
+	case CUBE:
+		_focus = std::dynamic_pointer_cast<obj::Drawable, obj::Cube>(_cube);
+		_cube->draw();
+		_projCube->draw();
+		_miniCube->draw();
+		break;
+	case SPIRAL:
+		_focus = std::dynamic_pointer_cast<obj::Drawable, obj::Spiral>(_spiral);
+		_focus = _spiral;
+		_spiral->draw();
+		_projSpiral->draw();
+		break;
+	default:
+		break;
+	}	
+	glfwSwapBuffers(_activity.ref);
 }
 
 void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -200,6 +238,12 @@ void MyEngine::_keyCallback(GLFWwindow * window, int key, int scancode, int acti
 			break;
 		case GLFW_KEY_7:
 			context->_spiral->reconstruct(70);
+			break;
+		case GLFW_KEY_8:
+			context->_spiral->reconstruct(80);
+			break;
+		case GLFW_KEY_9:
+			context->_spiral->reconstruct(90);
 			break;
 		default:
 			break;

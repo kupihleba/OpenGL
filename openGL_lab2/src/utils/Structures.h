@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <glm/glm.hpp>
+#include <utils/Proto.h>
 
 using std::string;
 
@@ -33,3 +34,17 @@ struct Point3D {
 	glm::vec3 toVec() const;
 };
 
+struct Light {
+	glm::vec3 position;
+	glm::vec3 intensities;
+};
+
+enum ObjectType {
+	CUBE,
+	SPIRAL
+};
+
+struct Chunk {
+	proto::AttributeType type;
+	GLsizei size;
+};

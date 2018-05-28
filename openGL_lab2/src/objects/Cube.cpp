@@ -3,104 +3,144 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <lib/Bitmap.h>
 
+/*
 #define DIM 3	// dimension
 #define PT_PER_EDGE 4
 // #define COLORS 6 * 3
-#define EDGES 6 // number of edges 
+#define EDGES 6 // number of edges */
 #define PI 3.14159265358979f
 
 using namespace obj;
 
-Cube::Cube(GLuint shader):Object(shader)
-{
-	_shader = shader;
-	_view = GL_LINE;
 
-	float data[DIM * EDGES * PT_PER_EDGE /*+ COLOURS*/] = {
-		
+obj::Cube::Cube(std::shared_ptr<Shader> shader)
+	:Drawable(shader)
+{
+#if 0
+	_vertices = {
+
 		//1.0f,  0.0f, 0.0f,
 		//     BACK     //
 		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f, 
 		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f, 
+		-1.0f,  1.0f,  1.0f,
 
 		//0.5f,  0.0f, 0.0f,
 		//     FACE     //
-	     1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-	     1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f, 
+		1.0f, -1.0f,  1.0f, 
+		1.0f,  1.0f,  1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f, 
+		1.0f,  1.0f,  1.0f,
 
 		//0.0f,  0.1f, 0.0f,
 		//    RIGHT     //
+		-1.0f,  1.0f, -1.0f, 
+		1.0f,  1.0f, -1.0f, 
+		1.0f,  1.0f,  1.0f, 
 		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f, 
+		1.0f,  1.0f,  1.0f,
 
 		//0.0f,  0.5f, 0.0f,
 		//     LEFT     //
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f, -1.0f, 
+		1.0f, -1.0f,  1.0f, 
 		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f, 
+		-1.0f, -1.0f,  1.0f,
+
 		//0.0f,  0.0f, 1.0f,
 		//    BOTTOM    //
+		-1.0f,  1.0f, -1.0f, 
+		1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
 		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f, 
+		1.0f, -1.0f, -1.0f,
 
 		//0.0f,  0.0f, 5.0f,
 		//     TOP      //
-   	     1.0f,  1.0f, 1.0f,
-	     1.0f, -1.0f, 1.0f,
-	    -1.0f, -1.0f, 1.0f,
-		-1.0f,  1.0f, 1.0f,
+		1.0f,  1.0f, 1.0f, 
+		1.0f, -1.0f, 1.0f, 
+		-1.0f, -1.0f, 1.0f, 
+		1.0f,  1.0f, 1.0f,
+		-1.0f,  1.0f, 1.0f, 
+		-1.0f, -1.0f, 1.0f,
 	};
+#endif;
+#if 1
+	_vertices = {
+		-1.0f, -1.0f, -1.0f,  0.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,  1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,  0.0f, 1.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,  1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,  1.0f, 1.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,  0.0f, 1.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
 
-	for (int i = 0; i < DIM * EDGES * PT_PER_EDGE; i++) {
-		data[i] /= 2.0f;
-	}
+		-1.0f, 1.0f, -1.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,  1.0f, 1.0f,  0.0f, 1.0f, 0.0f,   1.0f, 1.0f, 1.0f, 1.0f,
+
+		-1.0f, -1.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+
+		-1.0f, -1.0f, -1.0f,  0.0f, 0.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,  1.0f, 0.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,  0.0f, 1.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,  1.0f, 1.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+
+		-1.0f, -1.0f, 1.0f,  0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,  0.0f, 1.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,  1.0f, 1.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,  1.0f, 0.0f, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+
+		1.0f, -1.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,  0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,  0.0f, 1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f, 1.0f
+	};
 	
-	glGenBuffers(1, &_VBufObj);
-	// glGenVertexArrays(1, &_VArrObj);
-
-	// glBindVertexArray(_VArrObj);
-	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-	/*
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	*/
-
-	glBindVertexArray(0);
+#endif
+	loadVertices();
 }
 
 
-Cube::~Cube() 
+void obj::Cube::_draw()
 {
-	glDeleteBuffers(1, &_VBufObj);
+	//glDrawArrays(GL_QUADS, 0, DIM * EDGES * PT_PER_EDGE);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-
-void obj::Cube::_draw() {
-	GLint myColor = glGetUniformLocation(_shader, "myColor");
-
-	glUniform4f(myColor, 0.0f, 0.0f, 1.0f, 0.9f);
-	glPolygonMode(GL_FRONT_AND_BACK, _view);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _VBufObj);
-	//glBindVertexArray(_VBufObj);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glDrawArrays(GL_QUADS, 0, DIM * EDGES * PT_PER_EDGE);
-	glBindVertexArray(0);
+void obj::Cube::_defineVao()
+{
+	const GLsizei DIM = 3;
+	const GLsizei RGBA = 4;
+	using proto::AttributeType;
+	*this << Chunk{ AttributeType::POSITION, DIM }
+		  << Chunk{ AttributeType::TEXTURE, 2 }
+		  << Chunk{ AttributeType::NORMAL, DIM }
+	      << Chunk{ AttributeType::COLOR, RGBA };
 }
 
 string obj::Cube::toString() const
